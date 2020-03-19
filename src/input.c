@@ -22,18 +22,54 @@
 #include "../include/input.h"
 
 int readParams(struct params *pars, const char *fname) {
-     /* Read strings */
-     int len = DEFAULT_STRING_LENGTH;
-     pars->OutputDirectory = malloc(len);
-     pars->Name = malloc(len);
-     pars->ClassIniFile = malloc(len);
-     pars->ClassPreFile = malloc(len);
-     ini_gets("Output", "Directory", "./output", pars->OutputDirectory, len, fname);
-     ini_gets("Simulation", "Name", "No Name", pars->Name, len, fname);
-     ini_gets("Input", "ClassIniFile", "", pars->ClassIniFile, len, fname);
-     ini_gets("Input", "ClassPreFile", "", pars->ClassPreFile, len, fname);
+    /* Read strings */
+    int len = DEFAULT_STRING_LENGTH;
+    pars->OutputDirectory = malloc(len);
+    pars->Name = malloc(len);
+    pars->ClassIniFile = malloc(len);
+    pars->ClassPreFile = malloc(len);
+    ini_gets("Output", "Directory", "./output", pars->OutputDirectory, len, fname);
+    ini_gets("Simulation", "Name", "No Name", pars->Name, len, fname);
+    ini_gets("Input", "ClassIniFile", "", pars->ClassIniFile, len, fname);
+    ini_gets("Input", "ClassPreFile", "", pars->ClassPreFile, len, fname);
 
-     return 0;
+    char *listStr = malloc(1000);
+    ini_gets("Output", "Functions", "", listStr, 1000, fname);
+    listStr = realloc(listStr, strlen(listStr) + 1);
+
+    /* Parse the titles */
+    int num = 0, i = 0;
+    int read = 0, bytes;
+    char str[40];
+
+    while(sscanf(listStr + read, "%[^,],%n", str, &bytes) > 0) {
+        if (listStr[read + bytes] == '\0') break; /* reached the end */
+        read += bytes;
+        num += 1;
+    }
+
+    /* Allocate memory for the array of the titles */
+    pars->NumFunctions = num;
+    pars->DesiredFunctions = malloc(num * sizeof(char*));
+
+    /* Rewind and actually read out the titles */
+    read = 0;
+    i = 0;
+    while(sscanf(listStr + read, "%[^,],%n", str, &bytes) > 0) {
+        if (listStr[read + bytes] == '\0') break; /* reached the end */
+
+        /* Strip white space */
+        char title[40];
+        sscanf(str, "%s", title);
+
+        /* Store the title */
+        pars->DesiredFunctions[i] = malloc(strlen(title) + 1);
+        strcpy(pars->DesiredFunctions[i], title);
+        read += bytes;
+        i++;
+    }
+    
+    return 0;
 }
 
 int readUnits(struct units *us, const char *fname) {

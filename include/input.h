@@ -39,6 +39,8 @@ struct params {
 
     /* Output parameters */
     char *OutputDirectory;
+    char **DesiredFunctions; //titles of columns that need to be exported
+    int NumFunctions;
 };
 
 struct units {

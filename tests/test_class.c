@@ -72,8 +72,8 @@ int main() {
     double w_late = p_late/rho_late;
 
     /* Does it make sense? */
-    assert(fabs(w_early - 0.33333) < 1e-4);
-    assert(fabs(w_late - 0.0) < 1e-4);
+    assert(fabs(w_early - 0.33333) < 1e-4); //radiation
+    assert(fabs(w_late - 0.0) < 1e-4); //matter
 
     printf("Shutting CLASS down again.\n");
 

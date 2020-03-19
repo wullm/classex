@@ -87,6 +87,30 @@ int main(int argc, char *argv[]) {
         printf("Error in perturb_init \n%s\n", pt.error_message);
     }
 
+    printf("%s\n", pt.scalar_titles);
+    printf("We have %d titles\n", pt.number_of_scalar_titles);
+
+    /* Get the transfer function titles from CLASS */
+    char titles[_MAXTITLESTRINGLENGTH_];
+    perturb_output_titles(&ba, &pt, class_format, titles);
+
+    printf("%s\n\n", titles);
+
+    /* Count and parse them */
+    int i = 0;
+    int read = 0, bytes;
+    char title[40];
+    while(sscanf(titles + read, "%s%n", title, &bytes) > 0) {
+        read += bytes;
+
+        /* Ignore the phrase (h/Mpc), which is part of the first column */
+        if (strcmp(title, "(h/Mpc)") != 0) {
+            i++;
+        }
+    }
+
+    printf("We found %d titles.\n",i);
+
     printf("\nShutting CLASS down again.\n");
 
     /* Pre-empt segfault in CLASS if there is no interacting dark radiation */
