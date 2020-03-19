@@ -33,6 +33,10 @@ struct params {
     char *BackgroundFile;
     char *BackgroundFormat;
 
+    /* CLASS parameter file names */
+    char *ClassIniFile;
+    char *ClassPreFile;
+
     /* Output parameters */
     char *OutputDirectory;
 };

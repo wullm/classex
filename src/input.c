@@ -22,20 +22,16 @@
 #include "../include/input.h"
 
 int readParams(struct params *pars, const char *fname) {
-     // pars->GridSize = ini_getl("Box", "GridSize", 64, fname);
-     // pars->BoxLen = ini_getd("Box", "BoxLen", 1.0, fname);
-     // pars->Homogeneous = ini_getbool("Simulation", "Homogeneous", 0, fname);
-
      /* Read strings */
      int len = DEFAULT_STRING_LENGTH;
      pars->OutputDirectory = malloc(len);
      pars->Name = malloc(len);
-     pars->BackgroundFile = malloc(len);
-     pars->BackgroundFormat = malloc(len);
+     pars->ClassIniFile = malloc(len);
+     pars->ClassPreFile = malloc(len);
      ini_gets("Output", "Directory", "./output", pars->OutputDirectory, len, fname);
      ini_gets("Simulation", "Name", "No Name", pars->Name, len, fname);
-     ini_gets("Background", "File", "", pars->BackgroundFile, len, fname);
-     ini_gets("Background", "Format", "Plain", pars->BackgroundFormat, len, fname);
+     ini_gets("Input", "ClassIniFile", "", pars->ClassIniFile, len, fname);
+     ini_gets("Input", "ClassPreFile", "", pars->ClassPreFile, len, fname);
 
      return 0;
 }
@@ -45,8 +41,6 @@ int readUnits(struct units *us, const char *fname) {
     us->UnitLengthMetres = ini_getd("Units", "UnitLengthMetres", 1.0, fname);
     us->UnitTimeSeconds = ini_getd("Units", "UnitTimeSeconds", 1.0, fname);
     us->UnitMassKilogram = ini_getd("Units", "UnitMassKilogram", 1.0, fname);
-
-    us->BackgroundUnitLengthMetres = ini_getd("TransferFunctions", "UnitLengthMetres", MPC_METRES, fname);
 
     return 0;
 }

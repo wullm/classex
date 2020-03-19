@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <class.h>
 
 #include "../include/classex.h"
 
@@ -31,10 +32,11 @@ int main(int argc, char *argv[]) {
         return 0;
     }
 
-    /* Read options */
+    /* Read command line options */
     const char *fname = argv[1];
     printf("The parameter file is %s\n", fname);
 
+    /* Define the classex structures */
     struct params pars;
     struct units us;
     struct cosmology cosmo;
@@ -43,6 +45,71 @@ int main(int argc, char *argv[]) {
     readUnits(&us, fname);
     readCosmology(&cosmo, fname);
 
+
+    /* Define the CLASS structures */
+    struct precision pr;  /* for precision parameters */
+    struct background ba; /* for cosmological background */
+    struct thermo th;     /* for thermodynamics */
+    struct perturbs pt;   /* for source functions */
+    struct transfers tr;  /* for transfer functions */
+    struct primordial pm; /* for primordial spectra */
+    struct spectra sp;    /* for output spectra */
+    struct nonlinear nl;  /* for non-linear spectra */
+    struct lensing le;    /* for lensed spectra */
+    struct output op;     /* for output files */
+    ErrorMsg errmsg;      /* for CLASS-specific error messages */
+
+    /* If no class .ini file was specified, infer parameters from the cosmology */
+    if (pars.ClassIniFile[0] == '\0') {
+        printf("No CLASS file specified!\n");
+        return 1;
+    }
+
+    int class_argc = 2;
+    char *class_argv[] = {"", pars.ClassIniFile, pars.ClassPreFile};
+
+    if (input_init_from_arguments(class_argc, class_argv, &pr, &ba, &th, &pt, &tr,
+                                  &pm, &sp, &nl, &le, &op, errmsg) == _FAILURE_) {
+        printf("Error running input_init_from_arguments \n=>%s\n", errmsg);
+    }
+
+    printf("Running CLASS.\n\n");
+
+    if (background_init(&pr, &ba) == _FAILURE_) {
+        printf("Error running background_init \n%s\n", ba.error_message);
+    }
+
+    if (thermodynamics_init(&pr, &ba, &th) == _FAILURE_) {
+        printf("Error in thermodynamics_init \n%s\n", th.error_message);
+    }
+
+    if (perturb_init(&pr, &ba, &th, &pt) == _FAILURE_) {
+        printf("Error in perturb_init \n%s\n", pt.error_message);
+    }
+
+    printf("\nShutting CLASS down again.\n");
+
+    /* Pre-empt segfault in CLASS if there is no interacting dark radiation */
+    if (ba.has_idr == _FALSE_) {
+        pt.alpha_idm_dr = (double *)malloc(0);
+        pt.beta_idr = (double *)malloc(0);
+    }
+
+    /* Close CLASS again */
+    if (perturb_free(&pt) == _FAILURE_) {
+        printf("Error in freeing class memory \n%s\n", pt.error_message);
+        return 1;
+    }
+
+    if (thermodynamics_free(&th) == _FAILURE_) {
+        printf("Error in thermodynamics_free \n%s\n", th.error_message);
+        return 1;
+    }
+
+    if (background_free(&ba) == _FAILURE_) {
+        printf("Error in background_free \n%s\n", ba.error_message);
+        return 1;
+    }
 
 
 }
