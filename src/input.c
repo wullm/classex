@@ -37,11 +37,12 @@ int readParams(struct params *pars, const char *fname) {
     ini_gets("Output", "Functions", "", listStr, 1000, fname);
     listStr = realloc(listStr, strlen(listStr) + 1);
 
-    /* Parse the titles */
+    /* Parse the list of desired transfer functions */
     int num = 0, i = 0;
     int read = 0, bytes;
     char str[40];
 
+    /* First count the number of entries */
     while(sscanf(listStr + read, "%[^,],%n", str, &bytes) > 0) {
         if (listStr[read + bytes] == '\0') break; /* reached the end */
         read += bytes;
@@ -80,6 +81,10 @@ int readUnits(struct units *us, const char *fname) {
     us->UnitLengthMetres = ini_getd("Units", "UnitLengthMetres", 1.0, fname);
     us->UnitTimeSeconds = ini_getd("Units", "UnitTimeSeconds", 1.0, fname);
     us->UnitMassKilogram = ini_getd("Units", "UnitMassKilogram", 1.0, fname);
+
+    /* Physical constants */
+    us->SpeedOfLight = SPEED_OF_LIGHT_METRES_SECONDS * us->UnitTimeSeconds
+                        / us->UnitLengthMetres;
 
     return 0;
 }

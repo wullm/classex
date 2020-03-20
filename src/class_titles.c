@@ -84,14 +84,18 @@ int cleanClassTitles(struct class_titles *cat) {
 
 int matchClassTitles(struct class_titles *cat, struct params *pars) {
     /* Compare the user specified titles with the CLASS titles */
+    int matched = 0;
     for (int i=0; i<cat->num; i++) {
         for (int j=0; j<pars->NumFunctions; j++) {
             if (strcmp(cat->titles[i], pars->DesiredFunctions[j]) == 0) {
                 pars->IndexOfFunctions[j] = cat->indices[i];
                 printf("We found a match '%s': class_index = %d\n", cat->titles[i], cat->indices[i]);
+                matched++;
             }
         }
     }
+
+    pars->MatchedFunctions = matched;
 
     return 0;
 }

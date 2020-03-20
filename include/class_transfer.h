@@ -17,29 +17,24 @@
  *
  ******************************************************************************/
 
-#ifndef CLASS_TITLES_H
-#define CLASS_TITLES_H
+#ifndef CLASS_TRANSFER_H
+#define CLASS_TRANSFER_H
 
 #include <class.h>
+
 #include "input.h"
 
-#define MAX_NUM_FUNCTIONS 100
-
-struct class_titles {
-    int num;
-    int* indices;
-    char **titles;
+struct perturb_data {
+  int k_size;
+  int tau_size;
+  int n_functions;
+  double *delta;
+  double *k;
+  double *log_tau;
 };
 
-static inline void store_title(int **indices, char ***titles, int index, char *title, int *i) {
-    (*indices)[*i] = index;
-    (*titles)[*i] = malloc(strlen(title) + 1);
-    strcpy((*titles)[*i], title);
-    *i  = *i + 1;
-}
-
-int initClassTitles(struct class_titles *cat, struct perturbs *pt, struct background *ba);
-int cleanClassTitles(struct class_titles *cat);
-int matchClassTitles(struct class_titles *cat, struct params *pars);
+int readPerturbData(struct perturb_data *data, struct params *pars,
+                    struct units *us, struct perturbs *pt, struct background *ba);
+int cleanPerturbData(struct perturb_data *data);
 
 #endif

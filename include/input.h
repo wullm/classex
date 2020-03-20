@@ -23,6 +23,7 @@
 #define DEFAULT_STRING_LENGTH 50
 
 #define MPC_METRES 3.085677581282e22
+#define SPEED_OF_LIGHT_METRES_SECONDS 2.99792e8
 
 /* The .ini parser library is minIni */
 #include "../parser/minIni.h"
@@ -41,13 +42,17 @@ struct params {
     char *OutputDirectory;
     char **DesiredFunctions; //titles of columns that need to be exported
     int *IndexOfFunctions; //the corresponding CLASS indices
-    int NumFunctions; //the number of functions
+    int NumFunctions; //the number of requested functions
+    int MatchedFunctions; //the number of functions with data
 };
 
 struct units {
     double UnitLengthMetres;
     double UnitTimeSeconds;
     double UnitMassKilogram;
+
+    /* Physical constants in internal units */
+    double SpeedOfLight;
 
     /* Units for the transfer function input data */
     double BackgroundUnitLengthMetres;
