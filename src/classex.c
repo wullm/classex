@@ -41,14 +41,11 @@ int main(int argc, char *argv[]) {
     /* Define the classex structures */
     struct params pars;
     struct units us;
-    struct cosmology cosmo;
     struct class_titles titles;
     struct perturb_data data;
 
     readParams(&pars, fname);
     readUnits(&us, fname);
-    readCosmology(&cosmo, fname);
-
 
     /* Define the CLASS structures */
     struct precision pr;  /* for precision parameters */

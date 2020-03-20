@@ -91,13 +91,6 @@ int readUnits(struct units *us, const char *fname) {
     return 0;
 }
 
-int readCosmology(struct cosmology *cosmo, const char *fname) {
-     cosmo->h = ini_getd("Cosmology", "h", 0.70, fname);
-
-     return 0;
-}
-
-
 int cleanParams(struct params *parser) {
     for (int i=0; i<parser->NumDesiredFunctions; i++) {
         free(parser->DesiredFunctions[i]);

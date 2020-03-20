@@ -35,12 +35,6 @@ int main() {
     assert(us.UnitTimeSeconds == 3.154e16);
     assert(us.UnitMassKilogram == 1.989e40);
 
-    /* Test reading cosmology */
-    struct cosmology cosmo;
-    readCosmology(&cosmo, fname);
-
-    assert(cosmo.h == 0.67556);
-
     /* Clean up */
     cleanParams(&pars);
 
