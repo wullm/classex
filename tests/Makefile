@@ -28,6 +28,9 @@ all:
 	$(GCC) test_input.c -o test_input $(OBJECTS) $(LIBRARIES) $(CFLAGS) $(INCLUDES)
 	@./test_input
 
+	$(GCC) test_titles.c -o test_titles $(OBJECTS) $(LIBRARIES) $(CFLAGS) $(INCLUDES)
+	@./test_titles
+
 	$(GCC) test_class.c -o test_class $(OBJECTS) $(LIBRARIES) $(CFLAGS) $(INCLUDES)
 	@./test_class
 

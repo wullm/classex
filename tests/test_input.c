@@ -21,11 +21,13 @@ int main() {
     assert(strcmp(pars.OutputDirectory, "../tests") == 0);
 
     /* Test the transfer function titles */
-    assert(pars.NumDesiredFunctions == 4);
+    assert(pars.NumDesiredFunctions == 6);
     assert(strcmp(pars.DesiredFunctions[0], "d_cdm") == 0);
     assert(strcmp(pars.DesiredFunctions[1], "H_T_Nb_prime") == 0);
     assert(strcmp(pars.DesiredFunctions[2], "eta_prime") == 0);
     assert(strcmp(pars.DesiredFunctions[3], "h_prime") == 0);
+    assert(strcmp(pars.DesiredFunctions[4], "test1") == 0);
+    assert(strcmp(pars.DesiredFunctions[5], "test2") == 0);
 
     /* Test reading units */
     struct units us;

@@ -42,7 +42,7 @@ int readParams(struct params *pars, const char *fname) {
     /* Parse the list of desired transfer functions */
     int num = 0, i = 0;
     int read = 0, bytes;
-    char str[40];
+    char str[200];
 
     /* First count the number of entries */
     while(sscanf(listStr + read, "%[^,],%n", str, &bytes) > 0) {
