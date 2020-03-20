@@ -75,7 +75,49 @@ int write_perturb(struct perturb_data *data, struct params *pars,
     h_err = H5Awrite(h_attr, H5T_NATIVE_DOUBLE, &unit_time_cgs);
     H5Aclose(h_attr);
 
-    /* Done with the single scalar dataspace */
+    /* For strings, we need to prepare a datatype */
+    const hid_t h_type = H5Tcopy(H5T_C_S1);
+    h_err = H5Tset_size(h_type, strlen(pars->Name)); //length of simname
+
+    /* Create another attribute, which is the name of the simulation */
+    h_attr = H5Acreate1(h_grp, "Name", h_type, h_space, H5P_DEFAULT);
+
+    /* Write the name attribute */
+    h_err = H5Awrite(h_attr, h_type, pars->Name);
+
+    /* Done with the single entry dataspace */
+    H5Sclose(h_space);
+
+    /* Create array of titles of only those titles that have a matching index
+     * and are therefore exported (there are data->n_functions of them). */
+    char **output_titles = malloc(data->n_functions * sizeof(char*));
+    int j = 0;
+    for (int i=0; i<pars->NumDesiredFunctions; i++) {
+        if (pars->IndexOfFunctions[j] >= 0) { //has a matching index
+            output_titles[j] = malloc(strlen(pars->DesiredFunctions[i]) + 1);
+            strcpy(output_titles[j], pars->DesiredFunctions[i]);
+            j++;
+        }
+    }
+
+    /* Write array of column titles, corresponding to the exported functions */
+    hsize_t dim_columns[1] = {data->n_functions};
+
+    /* Create dataspace */
+    h_space = H5Screate(H5S_SIMPLE);
+    H5Sset_extent_simple(h_space, ndims, dim_columns, NULL);
+
+    /* Set string length to be variable */
+    h_err = H5Tset_size(h_type, H5T_VARIABLE); //length of strings
+
+    /* Create another attribute, which is the name of the simulation */
+    h_attr = H5Acreate1(h_grp, "FunctionTitles", h_type, h_space, H5P_DEFAULT);
+
+    /* Write the name attribute */
+    h_err = H5Awrite(h_attr, h_type, output_titles);
+
+
+    /* Done with the dataspace */
     H5Sclose(h_space);
 
     /* Close header */

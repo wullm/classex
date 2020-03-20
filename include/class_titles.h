@@ -25,16 +25,21 @@
 
 #define MAX_NUM_FUNCTIONS 100
 
-struct class_titles {
-    int num;
-    int* indices;
-    char **titles;
+struct index_title {
+    int index;
+    char *title;
 };
 
-static inline void store_title(int **indices, char ***titles, int index, char *title, int *i) {
-    (*indices)[*i] = index;
-    (*titles)[*i] = malloc(strlen(title) + 1);
-    strcpy((*titles)[*i], title);
+struct class_titles {
+    int num;
+    struct index_title *pairs;
+};
+
+/* Adds index to indices, adds title to titles, increments the counter by one. */
+static inline void store_title(struct index_title **pairs, int index, char *title, int *i) {
+    (*pairs + *i)->index = index;
+    (*pairs + *i)->title = malloc(strlen(title) + 1);
+    strcpy((*pairs + *i)->title, title);
     *i  = *i + 1;
 }
 

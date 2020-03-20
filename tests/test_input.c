@@ -21,7 +21,7 @@ int main() {
     assert(strcmp(pars.OutputDirectory, "../tests") == 0);
 
     /* Test the transfer function titles */
-    assert(pars.NumFunctions == 4);
+    assert(pars.NumDesiredFunctions == 4);
     assert(strcmp(pars.DesiredFunctions[0], "d_cdm") == 0);
     assert(strcmp(pars.DesiredFunctions[1], "H_T_Nb_prime") == 0);
     assert(strcmp(pars.DesiredFunctions[2], "eta_prime") == 0);

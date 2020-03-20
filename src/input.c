@@ -52,7 +52,7 @@ int readParams(struct params *pars, const char *fname) {
     }
 
     /* Allocate memory for the array of the titles */
-    pars->NumFunctions = num;
+    pars->NumDesiredFunctions = num;
     pars->DesiredFunctions = malloc(num * sizeof(char*));
     pars->IndexOfFunctions = malloc(num * sizeof(int));
 
@@ -99,7 +99,7 @@ int readCosmology(struct cosmology *cosmo, const char *fname) {
 
 
 int cleanParams(struct params *parser) {
-    for (int i=0; i<parser->NumFunctions; i++) {
+    for (int i=0; i<parser->NumDesiredFunctions; i++) {
         free(parser->DesiredFunctions[i]);
     }
     free(parser->DesiredFunctions);

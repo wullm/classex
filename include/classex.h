@@ -20,14 +20,20 @@
 #ifndef CLASSEX_H
 #define CLASSEX_H
 
+#include <stdio.h>
+
 #include "input.h"
 #include "class_titles.h"
 #include "class_transfer.h"
 #include "output.h"
 
-
 #define TXT_RED "\033[31;1m"
 #define TXT_GREEN "\033[32;1m"
 #define TXT_RESET "\033[0m"
+
+static inline void error(char *errmsg) {
+    printf("%s\n", errmsg);
+    exit(1);
+}
 
 #endif

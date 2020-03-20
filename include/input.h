@@ -43,7 +43,7 @@ struct params {
     char *OutputFilename;
     char **DesiredFunctions; //titles of columns that need to be exported
     int *IndexOfFunctions; //the corresponding CLASS indices
-    int NumFunctions; //the number of requested functions
+    int NumDesiredFunctions; //the number of requested functions
     int MatchedFunctions; //the number of functions with data
 };
 

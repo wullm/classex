@@ -51,11 +51,6 @@ int readPerturbData(struct perturb_data *data, struct params *pars,
     /* The number of transfer functions to be read */
     data->n_functions = n_functions;
 
-    // /* What functions should be read */
-    // int *functions = malloc(n_functions * sizeof(double));
-    // functions[0] = pt->index_tp_delta_ncdm1;
-    // functions[1] = pt->index_tp_delta_cdm;
-
     /* Vector with the transfer functions T(tau, k) */
     data->delta = (double *)calloc(n_functions * k_size * tau_size, sizeof(double));
 
@@ -76,12 +71,16 @@ int readPerturbData(struct perturb_data *data, struct params *pars,
     /* Convert and store the transfer functions */
     for (size_t index_tau = 0; index_tau < tau_size; index_tau++) {
         for (size_t index_k = 0; index_k < k_size; index_k++) {
-            for (size_t index_func = 0; index_func < n_functions; index_func++) {
+            for (size_t index_func = 0; index_func < pars->NumDesiredFunctions; index_func++) {
+                /* Ignore functions that have no matching CLASS index */
+                if (pars->IndexOfFunctions[index_func] < 0) continue;
+
+                /* Otherwise, transfer the corresponding data */
                 index_tp = pars->IndexOfFunctions[index_func];  // type of source function
                 double p = pt->sources[index_md][index_ic * pt->tp_size[index_md] +
                                                 index_tp][index_tau * k_size + index_k];
 
-                /* Convert transfer functions from CLASS format to CAMB/HeWon/icgen/
+                /* Convert transfer functions from CLASS format to CAMB/HeWon/dexm/
                 *  Eisenstein-Hu format by multiplying by -1/k^2.
                 */
                 double k = pt->k[index_md][index_k] * h / unit_length_factor;
