@@ -25,10 +25,12 @@ int readParams(struct params *pars, const char *fname) {
     /* Read strings */
     int len = DEFAULT_STRING_LENGTH;
     pars->OutputDirectory = malloc(len);
+    pars->OutputFilename = malloc(len);
     pars->Name = malloc(len);
     pars->ClassIniFile = malloc(len);
     pars->ClassPreFile = malloc(len);
     ini_gets("Output", "Directory", "./output", pars->OutputDirectory, len, fname);
+    ini_gets("Output", "Filename", "perturb.hdf5", pars->OutputFilename, len, fname);
     ini_gets("Simulation", "Name", "No Name", pars->Name, len, fname);
     ini_gets("Input", "ClassIniFile", "", pars->ClassIniFile, len, fname);
     ini_gets("Input", "ClassPreFile", "", pars->ClassPreFile, len, fname);
@@ -103,6 +105,7 @@ int cleanParams(struct params *parser) {
     free(parser->DesiredFunctions);
     free(parser->IndexOfFunctions);
     free(parser->OutputDirectory);
+    free(parser->OutputFilename);
     free(parser->Name);
     free(parser->ClassIniFile);
     free(parser->ClassPreFile);

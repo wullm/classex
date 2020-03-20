@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
     struct output op;     /* for output files */
     ErrorMsg errmsg;      /* for CLASS-specific error messages */
 
-    /* If no class .ini file was specified, infer parameters from the cosmology */
+    /* If no class .ini file was specified, stop. */
     if (pars.ClassIniFile[0] == '\0') {
         printf("No CLASS file specified!\n");
         return 1;
@@ -102,6 +102,9 @@ int main(int argc, char *argv[]) {
     readPerturbData(&data, &pars, &us, &pt, &ba);
 
     printf("We have read out %d functions.\n", data.n_functions);
+
+    /* Write it to a file */
+    write_perturb(&data, &pars, &us, pars.OutputFilename);
 
     /* Clean perturb data */
     cleanPerturbData(&data);

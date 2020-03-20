@@ -20,8 +20,11 @@
 #ifndef OUTPUT_H
 #define OUTPUT_H
 
+#include <hdf5.h>
+
 #include "class_transfer.h"
 
-int write_perturb(struct perturb_data *data, char *fname);
+int write_perturb(struct perturb_data *data, struct params *pars,
+                  struct units *us, char *fname);
 
 #endif
