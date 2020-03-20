@@ -24,6 +24,7 @@ OBJECTS = lib/*.o
 all:
 	make minIni
 	$(GCC) src/input.c -c -o lib/input.o $(INCLUDES) $(CFLAGS)
+	$(GCC) src/class_titles.c -c -o lib/class_titles.o $(INCLUDES) $(CFLAGS)
 	$(GCC) src/classex.c -o classex $(INCLUDES) $(OBJECTS) $(LIBRARIES) $(CFLAGS)
 
 minIni:

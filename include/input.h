@@ -1,5 +1,5 @@
 /*******************************************************************************
- * This file is part of Firebolt.
+ * This file is part of classex.
  * Copyright (c) 2020 Willem Elbers (whe@willemelbers.com)
  *
  * This program is free software: you can redistribute it and/or modify
@@ -40,7 +40,8 @@ struct params {
     /* Output parameters */
     char *OutputDirectory;
     char **DesiredFunctions; //titles of columns that need to be exported
-    int NumFunctions;
+    int *IndexOfFunctions; //the corresponding CLASS indices
+    int NumFunctions; //the number of functions
 };
 
 struct units {
@@ -59,5 +60,7 @@ struct cosmology {
 int readParams(struct params *parser, const char *fname);
 int readUnits(struct units *us, const char *fname);
 int readCosmology(struct cosmology *cosmo, const char *fname);
+
+int cleanParams(struct params *parser);
 
 #endif

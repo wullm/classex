@@ -26,6 +26,8 @@
 
 const char *fname;
 
+
+
 int main(int argc, char *argv[]) {
     if (argc == 1) {
         printf("No parameter file specified.\n");
@@ -40,6 +42,7 @@ int main(int argc, char *argv[]) {
     struct params pars;
     struct units us;
     struct cosmology cosmo;
+    struct class_titles titles;
 
     readParams(&pars, fname);
     readUnits(&us, fname);
@@ -87,29 +90,48 @@ int main(int argc, char *argv[]) {
         printf("Error in perturb_init \n%s\n", pt.error_message);
     }
 
-    printf("%s\n", pt.scalar_titles);
-    printf("We have %d titles\n", pt.number_of_scalar_titles);
+    printf("\n");
 
-    /* Get the transfer function titles from CLASS */
-    char titles[_MAXTITLESTRINGLENGTH_];
-    perturb_output_titles(&ba, &pt, class_format, titles);
+    /* Match user-defined titles with CLASS indices */
+    initClassTitles(&titles, &pt, &ba);
+    matchClassTitles(&titles, &pars);
+    cleanClassTitles(&titles);
 
-    printf("%s\n\n", titles);
+    // printf("%s\n", pt.scalar_titles);
+    // printf("We have %d titles\n", pt.number_of_scalar_titles);
+    //
+    // /* Get the transfer function titles from CLASS */
+    // char titles[_MAXTITLESTRINGLENGTH_];
+    // perturb_output_titles(&ba, &pt, class_format, titles);
+    //
+    // printf("%s\n\n", titles);
+    //
+    // /* Count and parse them */
+    // int i = 0;
+    // int read = 0, bytes;
+    // char title[40];
+    // while(sscanf(titles + read, "%s%n", title, &bytes) > 0) {
+    //     read += bytes;
+    //
+    //     /* Ignore the phrase (h/Mpc), which is part of the first column */
+    //     if (strcmp(title, "(h/Mpc)") != 0) {
+    //
+    //         /* Compare with the titles given by the user */
+    //         for (int j=0; j<pars.NumFunctions; j++) {
+    //             if (strcmp(title, pars.DesiredFunctions[j]) == 0) {
+    //                 printf("We have a match %s %d %d\n", title, i, j);
+    //             }
+    //         }
+    //         i++;
+    //     }
+    // }
+    //
+    // printf("The index of d_cdm was %d\n", pt.index_tp_delta_cdm);
+    // printf("The index of d_cdm was %d (expected %d)\n", pt.index_tp_h_prime, pt.index_tp_delta_cdm + 39 -3);
+    //
+    // printf("We found %d titles.\n",i);
 
-    /* Count and parse them */
-    int i = 0;
-    int read = 0, bytes;
-    char title[40];
-    while(sscanf(titles + read, "%s%n", title, &bytes) > 0) {
-        read += bytes;
 
-        /* Ignore the phrase (h/Mpc), which is part of the first column */
-        if (strcmp(title, "(h/Mpc)") != 0) {
-            i++;
-        }
-    }
-
-    printf("We found %d titles.\n",i);
 
     printf("\nShutting CLASS down again.\n");
 
@@ -135,5 +157,6 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-
+    /* Clean up */
+    cleanParams(&pars);
 }

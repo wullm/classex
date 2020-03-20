@@ -1,5 +1,5 @@
 /*******************************************************************************
- * This file is part of Classex.
+ * This file is part of classex.
  * Copyright (c) 2020 Willem Elbers (whe@willemelbers.com)
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,14 +17,29 @@
  *
  ******************************************************************************/
 
-#ifndef CLASSEX_H
-#define CLASSEX_H
+#ifndef titles_H
+#define titles_H
 
+#include <class.h>
 #include "input.h"
-#include "class_titles.h"
 
-#define TXT_RED "\033[31;1m"
-#define TXT_GREEN "\033[32;1m"
-#define TXT_RESET "\033[0m"
+#define MAX_NUM_FUNCTIONS 100
+
+struct class_titles {
+    int num;
+    int* indices;
+    char **titles;
+};
+
+static inline void store_title(int **indices, char ***titles, int index, char *title, int *i) {
+    (*indices)[*i] = index;
+    (*titles)[*i] = malloc(strlen(title) + 1);
+    strcpy((*titles)[*i], title);
+    *i  = *i + 1;
+}
+
+int initClassTitles(struct class_titles *cat, struct perturbs *pt, struct background *ba);
+int cleanClassTitles(struct class_titles *cat);
+int matchClassTitles(struct class_titles *cat, struct params *pars);
 
 #endif

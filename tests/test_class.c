@@ -16,6 +16,7 @@ int main() {
     const char fname[] = "test_cosmology.ini";
     struct params pars;
     struct units us;
+    struct class_titles titles;
 
     readParams(&pars, fname);
     readUnits(&us, fname);
@@ -75,6 +76,20 @@ int main() {
     assert(fabs(w_early - 0.33333) < 1e-4); //radiation
     assert(fabs(w_late - 0.0) < 1e-4); //matter
 
+    printf("\n");
+
+    /* Test matching user-defined titles with CLASS indices */
+    initClassTitles(&titles, &pt, &ba);
+    matchClassTitles(&titles, &pars);
+    cleanClassTitles(&titles);
+
+    /* Does it make sense? */
+    assert(pars.IndexOfFunctions[0] == pt.index_tp_delta_cdm);
+    assert(pars.IndexOfFunctions[1] == pt.index_tp_H_T_Nb_prime);
+    assert(pars.IndexOfFunctions[2] == pt.index_tp_eta_prime);
+    assert(pars.IndexOfFunctions[3] == pt.index_tp_h_prime);
+
+
     printf("Shutting CLASS down again.\n");
 
     /* Pre-empt segfault in CLASS if there is no interacting dark radiation */
@@ -87,6 +102,9 @@ int main() {
     assert(perturb_free(&pt) == _SUCCESS_);
     assert(thermodynamics_free(&th) == _SUCCESS_);
     assert(background_free(&ba) == _SUCCESS_);
+
+    /* Clean up */
+    cleanParams(&pars);
 
     sucmsg("test_class:\t SUCCESS");
 }

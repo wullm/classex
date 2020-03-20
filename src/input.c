@@ -1,5 +1,5 @@
 /*******************************************************************************
- * This file is part of Firebolt.
+ * This file is part of classex.
  * Copyright (c) 2020 Willem Elbers (whe@willemelbers.com)
  *
  * This program is free software: you can redistribute it and/or modify
@@ -51,6 +51,7 @@ int readParams(struct params *pars, const char *fname) {
     /* Allocate memory for the array of the titles */
     pars->NumFunctions = num;
     pars->DesiredFunctions = malloc(num * sizeof(char*));
+    pars->IndexOfFunctions = malloc(num * sizeof(int));
 
     /* Rewind and actually read out the titles */
     read = 0;
@@ -68,7 +69,9 @@ int readParams(struct params *pars, const char *fname) {
         read += bytes;
         i++;
     }
-    
+
+    free(listStr);
+
     return 0;
 }
 
@@ -85,4 +88,19 @@ int readCosmology(struct cosmology *cosmo, const char *fname) {
      cosmo->h = ini_getd("Cosmology", "h", 0.70, fname);
 
      return 0;
+}
+
+
+int cleanParams(struct params *parser) {
+    for (int i=0; i<parser->NumFunctions; i++) {
+        free(parser->DesiredFunctions[i]);
+    }
+    free(parser->DesiredFunctions);
+    free(parser->IndexOfFunctions);
+    free(parser->OutputDirectory);
+    free(parser->Name);
+    free(parser->ClassIniFile);
+    free(parser->ClassPreFile);
+
+    return 0;
 }
