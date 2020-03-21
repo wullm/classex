@@ -49,6 +49,7 @@ int readParams(struct params *pars, const char *fname) {
         if (listStr[read + bytes] == '\0') break; /* reached the end */
         read += bytes;
         num += 1;
+        if (bytes == 0) break; /* nothing read; no comma's */
     }
 
     /* Allocate memory for the array of the titles */
@@ -71,6 +72,8 @@ int readParams(struct params *pars, const char *fname) {
         strcpy(pars->DesiredFunctions[i], title);
         read += bytes;
         i++;
+
+        if (bytes == 0) break; /* nothing read; no comma's */
     }
 
     free(listStr);

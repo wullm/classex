@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
 
     /* Read command line options */
     const char *fname = argv[1];
-    printf("The parameter file is %s\n", fname);
+    printf("The classex parameter file is %s\n", fname);
 
     /* Define the classex structures */
     struct params pars;

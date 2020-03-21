@@ -28,11 +28,14 @@ all:
 	$(GCC) test_input.c -o test_input $(OBJECTS) $(LIBRARIES) $(CFLAGS) $(INCLUDES)
 	@./test_input
 
+	$(GCC) test_class.c -o test_class $(OBJECTS) $(LIBRARIES) $(CFLAGS) $(INCLUDES)
+	@./test_class
+
 	$(GCC) test_titles.c -o test_titles $(OBJECTS) $(LIBRARIES) $(CFLAGS) $(INCLUDES)
 	@./test_titles
 
-	$(GCC) test_class.c -o test_class $(OBJECTS) $(LIBRARIES) $(CFLAGS) $(INCLUDES)
-	@./test_class
+	$(GCC) test_transfer.c -o test_transfer $(OBJECTS) $(LIBRARIES) $(CFLAGS) $(INCLUDES)
+	@./test_transfer
 
 	$(GCC) test_hdf5.c -o test_hdf5 $(OBJECTS) $(LIBRARIES) $(CFLAGS) $(INCLUDES)
 	rm -f test.hdf5
