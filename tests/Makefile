@@ -42,3 +42,8 @@ all:
 	@./test_hdf5
 	@rm test.hdf5
 	@rm -f output/minimal.*
+
+	$(GCC) test_output.c -o test_output $(OBJECTS) $(LIBRARIES) $(CFLAGS) $(INCLUDES)
+	rm -f test_perturb.hdf5
+	@./test_output
+	@rm test_perturb.hdf5
