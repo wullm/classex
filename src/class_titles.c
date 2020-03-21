@@ -107,9 +107,10 @@ int matchClassTitles(struct class_titles *cat, struct params *pars) {
     /* Print warnings for titles that don't have matches */
     for (int j=0; j<pars->NumDesiredFunctions; j++) {
         if (pars->IndexOfFunctions[j] < 0) {
-            printf("WARNING: '%s' has no match!\n", pars->DesiredFunctions[j]);
+            printf("WARNING: '%s' (%d) has no match!\n", pars->DesiredFunctions[j], j);
         }
     }
+    printf("\n");
 
     return 0;
 }

@@ -38,16 +38,15 @@ int readParams(struct params *pars, const char *fname) {
     listStr = realloc(listStr, strlen(listStr) + 1);
 
     /* Parse the list of desired transfer functions */
-    int num = 0, i = 0;
-    int read = 0, bytes;
+    int read = 0, bytes, i;
     char str[200];
+    int num = 1;
 
-    /* First count the number of entries */
-    while(sscanf(listStr + read, "%[^,],%n", str, &bytes) > 0) {
-        if (listStr[read + bytes] == '\0') break; /* reached the end */
-        read += bytes;
-        num += 1;
-        if (bytes == 0) break; /* nothing read; no comma's */
+    /* First, count the number of titles (# of comma's + 1) in the string */
+    for (int j=0; j<strlen(listStr) + 1; j++) {
+        if (listStr[j] == ',') {
+            num++;
+        }
     }
 
     /* Allocate memory for the array of the titles */
@@ -59,7 +58,7 @@ int readParams(struct params *pars, const char *fname) {
     read = 0;
     i = 0;
     while(sscanf(listStr + read, "%[^,],%n", str, &bytes) > 0) {
-        if (listStr[read + bytes] == '\0') break; /* reached the end */
+        if (i >= num) break; /* we are done */
 
         /* Strip white space */
         char title[40];
@@ -70,8 +69,6 @@ int readParams(struct params *pars, const char *fname) {
         strcpy(pars->DesiredFunctions[i], title);
         read += bytes;
         i++;
-
-        if (bytes == 0) break; /* nothing read; no comma's */
     }
 
     free(listStr);
