@@ -252,7 +252,7 @@ int main() {
 
     /* File name for the test HDF5 file */
     char h5fname[50];
-    sprintf(h5fname, "%s/%s", pars.OutputDirectory, "test.hdf5");
+    sprintf(h5fname, "%s", "test.hdf5");
 
     /* Test writing an HDF5 file */
     printf("Creating HDF5 file %s\n", h5fname);

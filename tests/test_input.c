@@ -18,7 +18,6 @@ int main() {
     readParams(&pars, fname);
 
     assert(strcmp(pars.Name, "Test Simulation") == 0);
-    assert(strcmp(pars.OutputDirectory, "../tests") == 0);
 
     /* Test the transfer function titles */
     assert(pars.NumDesiredFunctions == 6);

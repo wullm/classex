@@ -39,7 +39,6 @@ struct params {
     char *ClassPreFile;
 
     /* Output parameters */
-    char *OutputDirectory;
     char *OutputFilename;
     char **DesiredFunctions; //titles of columns that need to be exported
     int *IndexOfFunctions; //the corresponding CLASS indices
