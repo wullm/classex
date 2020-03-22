@@ -1,0 +1,37 @@
+#Compiler options
+GCC = gcc -std=c99 -fopenmp
+
+#Libraries
+INI_PARSER = parser/minIni.o
+STD_LIBRARIES = -lm
+HDF5_LIBRARIES = -lhdf5
+CLASS_LIBRARIES = -lclass
+
+CLASS_PATH = /cosma5/data/durham/dc-elbe1/class3/class_public
+
+HDF5_INCLUDES += -I/usr/lib/x86_64-linux-gnu/hdf5/serial/include -I/cosma/local/parallel-hdf5/gnu_7.3.0_ompi_3.0.1/1.10.3/include -I/usr/lib64 -I/cosma/local/gcc/7.3.0/include -I/cosma/local/openmpi/gnu_7.3.0/3.0.1/include
+HDF5_LIBRARIES += -L/usr/lib64 -L/cosma/local/gcc/7.3.0/lib64/ -L/cosma/local/parallel-hdf5/gnu_7.3.0_ompi_3.0.1/1.10.3/lib -Wl,-rpath=/cosma/local/parallel-hdf5//gnu_7.3.0_ompi_3.0.1/1.10.3/lib -Wl,-rpath=/cosma/local/openmpi/gnu_7.3.0/3.0.1/lib
+
+CLASS_INCLUDES += -I$(CLASS_PATH)/include
+CLASS_LIBRARIES += -L$(CLASS_PATH) -Wl,-rpath=$(CLASS_PATH)
+
+#Putting it together
+INCLUDES = $(HDF5_INCLUDES) $(CLASS_INCLUDES)
+LIBRARIES = $(INI_PARSER) $(STD_LIBRARIES) $(HDF5_LIBRARIES) $(CLASS_LIBRARIES)
+CFLAGS = -Wall
+
+OBJECTS = lib/*.o
+
+all:
+	make minIni
+	$(GCC) src/input.c -c -o lib/input.o $(INCLUDES) $(CFLAGS)
+	$(GCC) src/output.c -c -o lib/output.o $(INCLUDES) $(CFLAGS)
+	$(GCC) src/class_titles.c -c -o lib/class_titles.o $(INCLUDES) $(CFLAGS)
+	$(GCC) src/class_transfer.c -c -o lib/class_transfer.o $(INCLUDES) $(CFLAGS)
+	$(GCC) src/classex.c -o classex $(INCLUDES) $(OBJECTS) $(LIBRARIES) $(CFLAGS)
+
+minIni:
+	cd parser && make
+
+check:
+	cd tests && make
