@@ -90,9 +90,12 @@ int readPerturbData(struct perturb_data *data, struct params *pars,
                  * which have dimension inverse time, as opposed to most other
                  * transfer functions corresponding to dimensionless quantities.
                  * These have titles starting with "t_".
+                 * Do the same for functions that are time derivatives, which
+                 * have titles ending in "_prime".
                  */
-                 if (pars->DesiredFunctions[index_func][0] == 't'
-                  && pars->DesiredFunctions[index_func][1] == '_') {
+                 char *title = pars->DesiredFunctions[index_func];
+                 char *title_end = &title[strlen(title)];
+                 if (strncmp(title, "t_", 2) == 0 || strncmp(title_end-6, "_prime", 6) == 0) {
                     T /= unit_time_factor;
                 }
                 data->delta[tau_size * k_size * index_func + k_size * index_tau + index_k] = T;
