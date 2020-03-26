@@ -85,6 +85,16 @@ int readPerturbData(struct perturb_data *data, struct params *pars,
                 */
                 double k = pt->k[index_md][index_k] * h / unit_length_factor;
                 double T = -p / k / k;
+
+                /* Extra unit conversion for velocity dispersion transfer functions,
+                 * which have dimension inverse time, as opposed to most other
+                 * transfer functions corresponding to dimensionless quantities.
+                 * These have titles starting with "t_".
+                 */
+                 if (pars->DesiredFunctions[index_func][0] == 't'
+                  && pars->DesiredFunctions[index_func][1] == '_') {
+                    T /= unit_time_factor;
+                }
                 data->delta[tau_size * k_size * index_func + k_size * index_tau + index_k] = T;
             }
         }
