@@ -72,6 +72,11 @@ int initClassTitles(struct class_titles *cat, struct perturbs *pt, struct backgr
         sprintf(tmp, "shear_ncdm[%d]", i);
         store_title(&cat->pairs, pt->index_tp_shear_ncdm1 + i, tmp, &cat->num);
     }
+    for (int i=0; i<ba->N_ncdm; i++) {
+        char tmp[40];
+        sprintf(tmp, "cs2_ncdm[%d]", i);
+        store_title(&cat->pairs, pt->index_tp_cs2_ncdm1 + i, tmp, &cat->num);
+    }
 
     return 0;
 }
