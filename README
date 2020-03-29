@@ -1,1 +1,16 @@
-Export perturbation vectors from CLASS.
+Export perturbation vectors from CLASS in hdf5 format. The perturbation
+vectors are source functions T(k,tau) as a function of scale and
+conformal time.
+
+How to use:
+
+1) Download and install the fork of CLASS v. 2.9.2 from wullm/class_public.
+
+(Alternatively, you could download the main version and change the Makefile
+to create a shared library libclass.so, which classex needs to run.)
+
+2) Download and install classex.
+3) Change the parameter file default.ini to select the desired transfer functions,
+   desired units, and to point classex to parameter (and optional precision) files
+   to pass on to CLASS.
+4) Run ./classex default.ini
