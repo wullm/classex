@@ -34,7 +34,7 @@ int readPerturbData(struct perturb_data *data, struct params *pars,
     const size_t n_functions = pars->MatchedFunctions;
 
     /* Little Hubble h */
-    const double h = ba->h;
+    // const double h = ba->h;
 
     /* CLASS to internal units conversion factor */
     const double unit_length_factor = MPC_METRES / us->UnitLengthMetres;
@@ -63,8 +63,11 @@ int readPerturbData(struct perturb_data *data, struct params *pars,
 
     /* Read out the wavenumbers */
     for (size_t index_k = 0; index_k < k_size; index_k++) {
-        /* Convert k from h/Mpc to 1/U_L */
-        double k = pt->k[index_md][index_k] * h / unit_length_factor;
+        /* Note: CLASS exports transfer function files with k in h/Mpc,
+         * but internally it uses 1/Mpc. */
+
+         /* Convert k from 1/Mpc to 1/U_L */
+        double k = pt->k[index_md][index_k] / unit_length_factor;
         data->k[index_k] = k;
     }
 
@@ -83,8 +86,8 @@ int readPerturbData(struct perturb_data *data, struct params *pars,
                 /* Convert transfer functions from CLASS format to CAMB/HeWon/dexm/
                 *  Eisenstein-Hu format by multiplying by -1/k^2.
                 */
-                double k = pt->k[index_md][index_k] * h / unit_length_factor;
-                double T = -p / k / k;
+                double k = pt->k[index_md][index_k] / unit_length_factor;
+                double T = -p/k/k;
 
                 /* Extra unit conversion for velocity dispersion transfer functions,
                  * which have dimension inverse time, as opposed to most other
