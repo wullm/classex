@@ -18,6 +18,7 @@
  ******************************************************************************/
 
 #include "../include/output.h"
+#include "../include/derivatives.h"
 
 int write_perturb(struct perturb_data *data, struct params *pars,
                   struct units *us, char *fname) {
@@ -88,12 +89,22 @@ int write_perturb(struct perturb_data *data, struct params *pars,
     /* Done with the single entry dataspace */
     H5Sclose(h_space);
 
-    /* Create array of titles of only those titles that have a matching index
-     * and are therefore exported (there are data->n_functions of them). */
+    /* Create array of titles of only those functions that are exported. */
     char **output_titles = malloc(data->n_functions * sizeof(char*));
+
+    /* First, add the titles that have a matching index. */
     int j = 0;
     for (int i=0; i<pars->NumDesiredFunctions; i++) {
         if (pars->IndexOfFunctions[j] >= 0) { //has a matching index
+            output_titles[j] = malloc(strlen(pars->DesiredFunctions[i]) + 1);
+            strcpy(output_titles[j], pars->DesiredFunctions[i]);
+            j++;
+        }
+    }
+
+    /* Then, add the titles of computed derivatives */
+    for (int i=0; i<pars->NumDesiredFunctions; i++) {
+        if (isNewDerivativeTitle(pars, pars->DesiredFunctions[i]) >= 0) {
             output_titles[j] = malloc(strlen(pars->DesiredFunctions[i]) + 1);
             strcpy(output_titles[j], pars->DesiredFunctions[i]);
             j++;

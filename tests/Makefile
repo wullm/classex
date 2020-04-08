@@ -25,6 +25,10 @@ all:
 	@#$(GCC) test_minIni.c -o test_minIni $(INI_PARSER)
 	@#@./test_minIni
 
+	$(GCC) test_derivatives.c -o test_derivatives $(OBJECTS) $(LIBRARIES) $(CFLAGS) $(INCLUDES)
+	@./test_derivatives
+
+
 	$(GCC) test_input.c -o test_input $(OBJECTS) $(LIBRARIES) $(CFLAGS) $(INCLUDES)
 	@./test_input
 

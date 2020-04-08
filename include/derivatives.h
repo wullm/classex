@@ -1,5 +1,5 @@
 /*******************************************************************************
- * This file is part of Classex.
+ * This file is part of classex.
  * Copyright (c) 2020 Willem Elbers (whe@willemelbers.com)
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,24 +17,14 @@
  *
  ******************************************************************************/
 
-#ifndef CLASSEX_H
-#define CLASSEX_H
-
-#include <stdio.h>
+#ifndef DERIVATIVES_H
+#define DERIVATIVES_H
 
 #include "input.h"
-#include "class_titles.h"
 #include "class_transfer.h"
-#include "output.h"
-#include "derivatives.h"
 
-#define TXT_RED "\033[31;1m"
-#define TXT_GREEN "\033[32;1m"
-#define TXT_RESET "\033[0m"
-
-static inline void error(char *errmsg) {
-    printf("%s\n", errmsg);
-    exit(1);
-}
+int isNewDerivativeTitle(struct params *pars, char *title);
+int computeDerivatives(struct perturb_data *data, struct params *pars,
+                       struct units *us);
 
 #endif

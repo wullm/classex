@@ -93,12 +93,14 @@ int main(int argc, char *argv[]) {
     /* Match user-defined titles with CLASS indices */
     initClassTitles(&titles, &pt, &ba);
     matchClassTitles(&titles, &pars);
-    cleanClassTitles(&titles);
 
     /* Read perturb data */
     readPerturbData(&data, &pars, &us, &pt, &ba);
 
     printf("We have read out %d functions.\n", data.n_functions);
+
+    /* Compute derivatives */
+    computeDerivatives(&data, &pars, &us);
 
     /* Write it to a file */
     write_perturb(&data, &pars, &us, pars.OutputFilename);
@@ -131,5 +133,6 @@ int main(int argc, char *argv[]) {
     }
 
     /* Clean up */
+    cleanClassTitles(&titles);
     cleanParams(&pars);
 }

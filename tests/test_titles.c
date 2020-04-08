@@ -86,7 +86,7 @@ int main() {
     assert(matchClassTitles(&titles, &pars) == 0);
 
     /* Check that the matches were successful as expected. */
-    assert(pars.NumDesiredFunctions == 6);
+    assert(pars.NumDesiredFunctions == 7);
     assert(pars.MatchedFunctions == 4);
     assert(strcmp(pars.DesiredFunctions[0], "d_cdm") == 0);
     assert(strcmp(pars.DesiredFunctions[1], "H_T_Nb_prime") == 0);

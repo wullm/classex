@@ -27,6 +27,7 @@ all:
 	$(GCC) src/output.c -c -o lib/output.o $(INCLUDES) $(CFLAGS)
 	$(GCC) src/class_titles.c -c -o lib/class_titles.o $(INCLUDES) $(CFLAGS)
 	$(GCC) src/class_transfer.c -c -o lib/class_transfer.o $(INCLUDES) $(CFLAGS)
+	$(GCC) src/derivatives.c -c -o lib/derivatives.o $(INCLUDES) $(CFLAGS)
 	$(GCC) src/classex.c -o classex $(INCLUDES) $(OBJECTS) $(LIBRARIES) $(CFLAGS)
 
 minIni:
