@@ -31,6 +31,7 @@ struct perturb_data {
   double *delta;
   double *k;
   double *log_tau;
+  // char **titles;
 };
 
 int readPerturbData(struct perturb_data *data, struct params *pars,
