@@ -2,6 +2,9 @@ Export perturbation vectors from CLASS in hdf5 format. The perturbation
 vectors are source functions T(k,tau) as a function of scale and
 conformal time.
 
+Requires:
+HDF5, CLASS
+
 How to use:
 
 1) Download and install the fork of CLASS v. 2.9.2 from wullm/class_public.
