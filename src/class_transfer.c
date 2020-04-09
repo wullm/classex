@@ -71,15 +71,18 @@ int readPerturbData(struct perturb_data *data, struct params *pars,
         data->k[index_k] = k;
     }
 
+    /* The index for data->delta, not CLASS index, nor index in titles string */
+    int index_func = 0;
     /* Convert and store the transfer functions */
-    for (size_t index_tau = 0; index_tau < tau_size; index_tau++) {
-        for (size_t index_k = 0; index_k < k_size; index_k++) {
-            for (size_t index_func = 0; index_func < pars->NumDesiredFunctions; index_func++) {
-                /* Ignore functions that have no matching CLASS index */
-                if (pars->IndexOfFunctions[index_func] < 0) continue;
+    for (size_t i = 0; i < pars->NumDesiredFunctions; i++) {
+        /* Ignore functions that have no matching CLASS index */
+        if (pars->IndexOfFunctions[i] < 0) continue;
 
-                /* Otherwise, transfer the corresponding data */
-                index_tp = pars->IndexOfFunctions[index_func];  // type of source function
+        /* For each timestep and wavenumber */
+        for (size_t index_tau = 0; index_tau < tau_size; index_tau++) {
+            for (size_t index_k = 0; index_k < k_size; index_k++) {
+                /* Transfer the corresponding data */
+                index_tp = pars->IndexOfFunctions[i];  // CLASS index
                 double p = pt->sources[index_md][index_ic * pt->tp_size[index_md] +
                                                 index_tp][index_tau * k_size + index_k];
 
@@ -96,7 +99,7 @@ int readPerturbData(struct perturb_data *data, struct params *pars,
                  * Do the same for functions that are time derivatives, which
                  * have titles ending in "_prime".
                  */
-                 char *title = pars->DesiredFunctions[index_func];
+                 char *title = pars->DesiredFunctions[i];
                  char *title_end = &title[strlen(title)];
                  if (strncmp(title, "t_", 2) == 0 || strncmp(title_end-6, "_prime", 6) == 0) {
                     T /= unit_time_factor;
@@ -104,6 +107,7 @@ int readPerturbData(struct perturb_data *data, struct params *pars,
                 data->delta[tau_size * k_size * index_func + k_size * index_tau + index_k] = T;
             }
         }
+        index_func++;
     }
 
     printf("The perturbations are sampled at %zu * %zu points.\n", k_size, tau_size);

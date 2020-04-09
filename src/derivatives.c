@@ -73,7 +73,6 @@ int computeDerivatives(struct perturb_data *data, struct params *pars,
     int derivatives = 0;
     for (int i=0; i<pars->NumDesiredFunctions; i++) {
         if (isNewDerivativeTitle(pars, pars->DesiredFunctions[i]) >= 0) {
-            printf("Dit is moeilijk hoor.\n");
             derivatives++;
         }
     }
@@ -97,13 +96,20 @@ int computeDerivatives(struct perturb_data *data, struct params *pars,
     size_t Ntau = data->tau_size;
     size_t Nf = data->n_functions;
 
-    /* Compute the new derivatives */
-    int j =  Nf - derivatives;
+    /* Compute the new derivatives.
+     * NB: the derivatives come after the CLASS functions, regardless of
+     * their order in the titles string. */
+
+    /* The index for data->delta, not CLASS index, nor index in titles string */
+    int index_func = Nf - derivatives;
+
+    /* For each requested title */
     for (int i=0; i<pars->NumDesiredFunctions; i++) {
         int deriv_of = isNewDerivativeTitle(pars, pars->DesiredFunctions[i]);
+
+        /* Ensure that this is a new derivative */
         if (deriv_of < 0) continue;
 
-        /* This is a new derivative */
 
         /* For each wavenumber */
         for (size_t index_k = 0; index_k < Nk; index_k++) {
@@ -111,26 +117,28 @@ int computeDerivatives(struct perturb_data *data, struct params *pars,
             double Ti = data->delta[arr_id(deriv_of,index_k,0,Nk,Ntau)];
             double Tp = data->delta[arr_id(deriv_of,index_k,1,Nk,Ntau)];
             double dtau_i = exp(data->log_tau[1]) - exp(data->log_tau[0]);
-            data->delta[arr_id(j,index_k,0,Nk,Ntau)] = (Tp-Ti)/dtau_i;
+            data->delta[arr_id(index_func,index_k,0,Nk,Ntau)] = (Tp-Ti)/dtau_i;
 
             /* Set the derivative to a backward estimate at the final time */
             double Tf = data->delta[arr_id(deriv_of,index_k,Ntau-1,Nk,Ntau)];
             double Tm = data->delta[arr_id(deriv_of,index_k,Ntau-2,Nk,Ntau)];
             double dtau_f = exp(data->log_tau[Ntau-1]) - exp(data->log_tau[Ntau-2]);
-            data->delta[arr_id(j,index_k,Ntau-1,Nk,Ntau)] = (Tf-Tm)/dtau_f;
+            data->delta[arr_id(index_func,index_k,Ntau-1,Nk,Ntau)] = (Tf-Tm)/dtau_f;
 
             /* For each intermediate time, use a centred difference */
             for (size_t index_tau = 1; index_tau < Ntau-1; index_tau++) {
                 double T0 = data->delta[arr_id(deriv_of,index_k,(index_tau-1),Nk,Ntau)];
                 double T1 = data->delta[arr_id(deriv_of,index_k,(index_tau+1),Nk,Ntau)];
+
                 double tau0 = exp(data->log_tau[index_tau - 1]);
                 double tau1 = exp(data->log_tau[index_tau + 1]);
                 double dTdtau = (T1 - T0)/(tau1 - tau0);
-                data->delta[arr_id(j,index_k,index_tau,Nk,Ntau)] = dTdtau;
+
+                data->delta[arr_id(index_func,index_k,index_tau,Nk,Ntau)] = dTdtau;
             }
         }
 
-        j++;
+        index_func++;
     }
 
     return 0;

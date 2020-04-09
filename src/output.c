@@ -95,7 +95,7 @@ int write_perturb(struct perturb_data *data, struct params *pars,
     /* First, add the titles that have a matching index. */
     int j = 0;
     for (int i=0; i<pars->NumDesiredFunctions; i++) {
-        if (pars->IndexOfFunctions[j] >= 0) { //has a matching index
+        if (pars->IndexOfFunctions[i] >= 0) { //has a matching index
             output_titles[j] = malloc(strlen(pars->DesiredFunctions[i]) + 1);
             strcpy(output_titles[j], pars->DesiredFunctions[i]);
             j++;

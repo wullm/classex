@@ -60,35 +60,39 @@ int main() {
     assert(matchClassTitles(&titles, &pars) == 0);
 
     /* Check that the matches were successful as expected. */
-    assert(pars.NumDesiredFunctions == 7);
+    assert(pars.NumDesiredFunctions == 8);
     assert(pars.MatchedFunctions == 4);
     assert(strcmp(pars.DesiredFunctions[0], "d_cdm") == 0);
     assert(strcmp(pars.DesiredFunctions[1], "H_T_Nb_prime") == 0);
     assert(strcmp(pars.DesiredFunctions[2], "eta_prime") == 0);
-    assert(strcmp(pars.DesiredFunctions[3], "h_prime") == 0);
-    assert(strcmp(pars.DesiredFunctions[6], "H_T_Nb_prime_prime") == 0);
+    assert(strcmp(pars.DesiredFunctions[3], "d_cdm_prime") == 0);
+    assert(strcmp(pars.DesiredFunctions[4], "h_prime") == 0);
+    assert(strcmp(pars.DesiredFunctions[7], "H_T_Nb_prime_prime") == 0);
     assert(pars.IndexOfFunctions[0] == pt.index_tp_delta_cdm);
     assert(pars.IndexOfFunctions[1] == pt.index_tp_H_T_Nb_prime);
     assert(pars.IndexOfFunctions[2] == pt.index_tp_eta_prime);
-    assert(pars.IndexOfFunctions[3] == pt.index_tp_h_prime);
+    assert(pars.IndexOfFunctions[4] == pt.index_tp_h_prime);
 
     /* Check that only d_cdm_prime is a new derivative */
     assert(isNewDerivativeTitle(&pars, pars.DesiredFunctions[0]) == -1);
     assert(isNewDerivativeTitle(&pars, pars.DesiredFunctions[1]) == -1);
     assert(isNewDerivativeTitle(&pars, pars.DesiredFunctions[2]) == -1);
-    assert(isNewDerivativeTitle(&pars, pars.DesiredFunctions[3]) == -1);
+    assert(isNewDerivativeTitle(&pars, pars.DesiredFunctions[3]) == 0);
     assert(isNewDerivativeTitle(&pars, pars.DesiredFunctions[4]) == -1);
     assert(isNewDerivativeTitle(&pars, pars.DesiredFunctions[5]) == -1);
-    assert(isNewDerivativeTitle(&pars, pars.DesiredFunctions[6]) == 1);
+    assert(isNewDerivativeTitle(&pars, pars.DesiredFunctions[6]) == -1);
+    assert(isNewDerivativeTitle(&pars, pars.DesiredFunctions[7]) == 1);
 
     /* Read perturb data */
     assert(readPerturbData(&data, &pars, &us, &pt, &ba) == 0);
+
+    printf("Successfully read primary data.\n");
 
     /* Compute derivatives */
     assert(computeDerivatives(&data, &pars, &us) == 0);
 
     /* Checks */
-    assert(pars.MatchedFunctions == 5); //now one more, because derivative!
+    assert(pars.MatchedFunctions == 6); //now one more, because derivative!
     assert(data.n_functions == pars.MatchedFunctions);
     assert(data.k_size > 100);
     assert(data.tau_size > 100);
@@ -103,32 +107,28 @@ int main() {
 
     /* Check that the perturbations are all non-zero */
     for (int i=0; i<data.k_size * data.tau_size * data.n_functions; i++) {
-        // printf("%d %d\n", i, data.k_size * data.tau_size * (data.n_functions -1));
         assert(data.delta[i] != 0);
     }
 
-    /* Check that if we integrate the derivative, we get back the input */
-    assert(strcmp(pars.DesiredFunctions[1], "H_T_Nb_prime") == 0); //input
-    assert(strcmp(pars.DesiredFunctions[6], "H_T_Nb_prime_prime") == 0); //computed
-    int source_index = 1;
-    int deriv_index = 4;
+    /* Check that integrating the derivative gives back the input */
+    assert(strcmp(pars.DesiredFunctions[0], "d_cdm") == 0); //input
+    assert(strcmp(pars.DesiredFunctions[3], "d_cdm_prime") == 0); //computed
+    int source_index = 0;
+    int deriv_index = 4; //confusingly, the derivatives come after the CLASS functions
     for (int i=0; i<data.k_size; i++) {
         double start = data.delta[data.tau_size * data.k_size * source_index + i];
         double integral = start;
         for (int j=0; j<data.tau_size-1; j++) {
             double dt = exp(data.log_tau[j+1]) - exp(data.log_tau[j]);
-            double deriv0 = data.delta[data.tau_size * data.k_size * deriv_index + data.k_size*j + i];
-            double deriv1 = data.delta[data.tau_size * data.k_size * deriv_index + data.k_size*(j+1) + i];
+            double deriv = data.delta[data.tau_size * data.k_size * deriv_index + data.k_size*j + i];
             double expected = data.delta[data.tau_size * data.k_size * source_index + data.k_size*j + i];
-            integral += dt * 0.5 * (deriv0 + deriv1);
+            integral += dt * deriv;
 
-            /* Enforce a reasonable error margin, but not if the derivative is large */
-            if (fabs(deriv0/expected) < 0.1) {
-                // printf("%d %e %e %f %e\n", j, integral, expected, fabs(integral - expected)/expected, deriv0/expected);
-                assert(fabs(integral - expected)/expected < 0.15);
-            }
+            /* Enforece small error margin */
+            assert(fabs(integral - expected)/expected < 0.03);
         }
     }
+
 
     printf("We have read out %d functions.\n", data.n_functions);
 

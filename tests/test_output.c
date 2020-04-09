@@ -60,9 +60,11 @@ int main() {
     /* Clean up the dictionary */
     assert(cleanClassTitles(&titles) == 0);
 
-
     /* Read perturb data */
     assert(readPerturbData(&data, &pars, &us, &pt, &ba) == 0);
+
+    /* Compute derivatives */
+    assert(computeDerivatives(&data, &pars, &us) == 0);
 
     printf("We have read out %d functions.\n", data.n_functions);
 
@@ -178,7 +180,7 @@ int main() {
     int j=0;
     for (int i=0; i<pars.NumDesiredFunctions; i++) {
         /* Ignore unknown functions (without matching CLASS index),
-         * which should not be in the file */
+         * which should not be in the file, except for derivatives */
         if (pars.IndexOfFunctions[i] >= 0) {
             assert(strcmp(pars.DesiredFunctions[i], read_titles[j]) == 0);
             printf("Checked '%s'.\n", read_titles[j]);

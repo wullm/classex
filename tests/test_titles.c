@@ -86,16 +86,16 @@ int main() {
     assert(matchClassTitles(&titles, &pars) == 0);
 
     /* Check that the matches were successful as expected. */
-    assert(pars.NumDesiredFunctions == 7);
+    assert(pars.NumDesiredFunctions == 8);
     assert(pars.MatchedFunctions == 4);
     assert(strcmp(pars.DesiredFunctions[0], "d_cdm") == 0);
     assert(strcmp(pars.DesiredFunctions[1], "H_T_Nb_prime") == 0);
     assert(strcmp(pars.DesiredFunctions[2], "eta_prime") == 0);
-    assert(strcmp(pars.DesiredFunctions[3], "h_prime") == 0);
+    assert(strcmp(pars.DesiredFunctions[4], "h_prime") == 0);
     assert(pars.IndexOfFunctions[0] == pt.index_tp_delta_cdm);
     assert(pars.IndexOfFunctions[1] == pt.index_tp_H_T_Nb_prime);
     assert(pars.IndexOfFunctions[2] == pt.index_tp_eta_prime);
-    assert(pars.IndexOfFunctions[3] == pt.index_tp_h_prime);
+    assert(pars.IndexOfFunctions[4] == pt.index_tp_h_prime);
 
     /* Clean up the dictionary */
     assert(cleanClassTitles(&titles) == 0);

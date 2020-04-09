@@ -87,7 +87,7 @@ int main() {
     assert(pars.IndexOfFunctions[0] == pt.index_tp_delta_cdm);
     assert(pars.IndexOfFunctions[1] == pt.index_tp_H_T_Nb_prime);
     assert(pars.IndexOfFunctions[2] == pt.index_tp_eta_prime);
-    assert(pars.IndexOfFunctions[3] == pt.index_tp_h_prime);
+    assert(pars.IndexOfFunctions[4] == pt.index_tp_h_prime);
 
 
     printf("Shutting CLASS down again.\n");
