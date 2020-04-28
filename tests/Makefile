@@ -8,11 +8,12 @@ HDF5_LIBRARIES = -lhdf5
 CLASS_LIBRARIES = -lclass
 
 CLASS_PATH = /home/qvgd89/class_m/class_public
+#CLASS_PATH = ../class/
 
 HDF5_INCLUDES += -I/usr/lib/x86_64-linux-gnu/hdf5/serial/include
 HDF5_LIBRARIES += -L/usr/lib/x86_64-linux-gnu/hdf5/serial -I/usr/include/hdf5/serial
 CLASS_INCLUDES += -I$(CLASS_PATH)/include
-CLASS_LIBRARIES += -L$(CLASS_PATH) -Wl,-rpath=$(CLASS_PATH)
+CLASS_LIBRARIES += -L../class -Wl,-rpath=../class
 
 #Putting it together
 INCLUDES = $(HDF5_INCLUDES) $(CLASS_INCLUDES)

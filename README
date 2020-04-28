@@ -7,11 +7,7 @@ HDF5, CLASS
 
 How to use:
 
-1) Download and install the fork of CLASS v. 2.9.2 from wullm/class_public.
-
-(Alternatively, you could download the main version and change the Makefile
-to create a shared library libclass.so, which classex needs to run.)
-
+1) Download and install CLASS v. 2.9.2 or later.
 2) Download and install classex.
 3) Change the parameter file default.ini to select the desired transfer functions,
    desired units, and to point classex to parameter (and optional precision) files
