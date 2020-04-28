@@ -31,6 +31,7 @@ struct perturb_data {
   double *delta;
   double *k;
   double *log_tau;
+  double *redshift;
   // char **titles;
 };
 

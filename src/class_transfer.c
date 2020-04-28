@@ -47,6 +47,7 @@ int readPerturbData(struct perturb_data *data, struct params *pars,
     /* Vector of the conformal times at which the perturbation is sampled */
     data->tau_size = tau_size;
     data->log_tau = (double *)calloc(tau_size, sizeof(double));
+    data->redshift = (double *)calloc(tau_size, sizeof(double));
 
     /* The number of transfer functions to be read */
     data->n_functions = n_functions;
@@ -110,6 +111,34 @@ int readPerturbData(struct perturb_data *data, struct params *pars,
         index_func++;
     }
 
+    /* Finally, we also want to get the redshifts. To do this, we need
+     * to let CLASS populate a vector of background quantities at each
+     * time step.
+     */
+
+    /* Allocate array for background quantities, most of which are not used */
+    double *pvecback = malloc(ba->bg_size_normal*sizeof(double));
+    int last_index; //not used, but is output by CLASS
+
+    /* Read out the redshifts */
+    for (size_t index_tau = 0; index_tau < tau_size; index_tau++) {
+        /* Conformal time in Mpc/c (the internal time unit in CLASS) */
+        double tau = pt->tau_sampling[index_tau];
+
+        /* Make CLASS evaluate background quantities at this time*/
+        background_at_tau(ba, tau, ba->short_info, ba->inter_normal,
+                          &last_index, pvecback);
+
+        /* The scale-factor and redshift */
+        double a = pvecback[ba->index_bg_a];
+        double z = 1./a - 1.;
+
+        /* Store the redshift */
+        data->redshift[index_tau] = z;
+    }
+
+    free(pvecback);
+
     printf("The perturbations are sampled at %zu * %zu points.\n", k_size, tau_size);
 
     return 0;
@@ -119,6 +148,7 @@ int cleanPerturbData(struct perturb_data *data) {
     free(data->delta);
     free(data->k);
     free(data->log_tau);
+    free(data->redshift);
 
     return 0;
 }

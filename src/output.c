@@ -182,6 +182,19 @@ int write_perturb(struct perturb_data *data, struct params *pars,
     /* Close the dataset */
     H5Dclose(h_data);
 
+    /* Create dataset with the same extensions */
+    h_data = H5Dcreate(h_grp, "Redshifts", H5T_NATIVE_DOUBLE,
+                       h_space, H5P_DEFAULT, h_prop, H5P_DEFAULT);
+    if (h_data < 0)
+    printf("Error while creating dataspace '%s'.\n", "Redshifts");
+
+    /* Write temporary buffer to HDF5 dataspace */
+    h_err = H5Dwrite(h_data, H5T_NATIVE_DOUBLE, h_space, H5S_ALL, H5P_DEFAULT, data->redshift);
+    if (h_err < 0) printf("Error while writing data array '%s'.\n", "data->redshift");
+
+    /* Close the dataset */
+    H5Dclose(h_data);
+
     /* Set the extent of the transfer function data */
     rank = 3;
     hsize_t shape_delta[3] = {data->n_functions, data->k_size, data->tau_size};
