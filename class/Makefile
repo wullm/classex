@@ -5,6 +5,9 @@
 ###### LINES TO ADAPT TO YOUR PLATEFORM ################
 ########################################################
 
+# path where CLASS is installed
+CLASS_PATH = /home/qvgd89/class_m/class_public
+
 # your C compiler:
 CC       = gcc
 
@@ -28,8 +31,6 @@ HYREC = hyrec
 ########################################################
 ###### IN PRINCIPLE THE REST SHOULD BE LEFT UNCHANGED ##
 ########################################################
-
-CLASS_PATH = /home/qvgd89/class_m/class_public
 
 # automatically add external programs if needed. First, initialize to blank.
 EXTERNAL =
