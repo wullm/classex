@@ -100,10 +100,23 @@ int readPerturbData(struct perturb_data *data, struct params *pars,
                  * Do the same for functions that are time derivatives, which
                  * have titles ending in "_prime".
                  */
-                 char *title = pars->DesiredFunctions[i];
-                 char *title_end = &title[strlen(title)];
-                 if (strncmp(title, "t_", 2) == 0 || strncmp(title_end-6, "_prime", 6) == 0) {
+                char *title = pars->DesiredFunctions[i];
+                char *title_end = &title[strlen(title)];
+                if (strncmp(title, "t_", 2) == 0 || strncmp(title_end-6, "_prime", 6) == 0) {
                     T /= unit_time_factor;
+                }
+
+                /* Extra unit conversion for potential transfer functions,
+                 * which have dimensions of energy per mass or (Length/Time)^2.
+                 * This applies to "phi", "psi", "h", "eta" and their
+                 * derivatives (and possibly higher order derivatives).
+                 * Note the difference between strcmp and str(n)cmp!
+                 */
+                if (strcmp(title, "h") == 0 || strncmp(title, "h_", 2) == 0 ||
+                    strcmp(title, "phi") == 0 || strncmp(title, "phi_", 4) == 0 ||
+                    strcmp(title, "eta") == 0 || strncmp(title, "eta_", 4) == 0 ||
+                    strcmp(title, "psi") == 0 || strncmp(title, "psi_", 4) == 0) {
+                        T *= pow(unit_length_factor / unit_time_factor, 2);
                 }
                 data->delta[tau_size * k_size * index_func + k_size * index_tau + index_k] = T;
             }
