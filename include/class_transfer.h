@@ -38,5 +38,7 @@ struct perturb_data {
 int readPerturbData(struct perturb_data *data, struct params *pars,
                     struct units *us, struct perturbs *pt, struct background *ba);
 int cleanPerturbData(struct perturb_data *data);
+double unitConversionFactor(char *title, double unit_length_factor,
+                            double unit_time_factor);
 
 #endif
