@@ -50,6 +50,7 @@ int initClassTitles(struct class_titles *cat, struct perturbs *pt, struct backgr
     store_title(&cat->pairs, pt->index_tp_eta_prime, "eta_prime", &cat->num);
     store_title(&cat->pairs, pt->index_tp_H_T_Nb_prime, "H_T_Nb_prime", &cat->num);
     store_title(&cat->pairs, pt->index_tp_k2gamma_Nb, "k2gamma_Nb", &cat->num);
+    store_title(&cat->pairs, pt->index_tp_delta_shift_Nb_m, "delta_shift_Nb_m", &cat->num);
 
     store_title(&cat->pairs, pt->index_tp_theta_g, "t_g", &cat->num);
     store_title(&cat->pairs, pt->index_tp_theta_b, "t_b", &cat->num);
@@ -82,6 +83,7 @@ int initClassTitles(struct class_titles *cat, struct perturbs *pt, struct backgr
         sprintf(tmp, "l3_ncdm[%d]", i);
         store_title(&cat->pairs, pt->index_tp_l3_ncdm1 + i, tmp, &cat->num);
     }
+
 
     return 0;
 }
