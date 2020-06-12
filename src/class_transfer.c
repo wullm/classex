@@ -79,6 +79,12 @@ int readPerturbData(struct perturb_data *data, struct params *pars,
         /* Ignore functions that have no matching CLASS index */
         if (pars->IndexOfFunctions[i] < 0) continue;
 
+        /* Determine the unit conversion factor */
+        char *title = pars->DesiredFunctions[i];
+        double unit_factor = unitConversionFactor(title, unit_length_factor, unit_time_factor);
+
+        printf("Unit conversion factor for '%s' is %f\n", title, unit_factor);
+
         /* For each timestep and wavenumber */
         for (size_t index_tau = 0; index_tau < tau_size; index_tau++) {
             for (size_t index_k = 0; index_k < k_size; index_k++) {
@@ -93,10 +99,6 @@ int readPerturbData(struct perturb_data *data, struct params *pars,
                 double k = pt->k[index_md][index_k] / unit_length_factor;
                 double T = -p/k/k;
 
-                /* Determine the unit conversion factor */
-                char *title = pars->DesiredFunctions[i];
-                double unit_factor = unitConversionFactor(title, unit_length_factor, unit_time_factor);
-
                 /* Convert from CLASS units to output units */
                 T *= unit_factor;
 
@@ -105,6 +107,8 @@ int readPerturbData(struct perturb_data *data, struct params *pars,
         }
         index_func++;
     }
+
+    printf("\n");
 
     /* Finally, we also want to get the redshifts. To do this, we need
      * to let CLASS populate a vector of background quantities at each
