@@ -95,7 +95,7 @@ int write_perturb(struct perturb_data *data, struct params *pars,
     /* First, add the titles that have a matching index. */
     int j = 0;
     for (int i=0; i<pars->NumDesiredFunctions; i++) {
-        if (pars->IndexOfFunctions[i] >= 0) { //has a matching index
+        if (pars->ClassPerturbIndices[i] >= 0) { //has a matching index
             output_titles[j] = malloc(strlen(pars->DesiredFunctions[i]) + 1);
             strcpy(output_titles[j], pars->DesiredFunctions[i]);
             j++;
@@ -210,6 +210,25 @@ int write_perturb(struct perturb_data *data, struct params *pars,
     /* Write temporary buffer to HDF5 dataspace */
     h_err = H5Dwrite(h_data, H5T_NATIVE_DOUBLE, h_space, H5S_ALL, H5P_DEFAULT, data->delta);
     if (h_err < 0) printf("Error while writing data array '%s'.", "data->delta");
+
+    /* Close the dataset */
+    H5Dclose(h_data);
+
+    /* Set the extent of the background densities data */
+    rank = 2;
+    hsize_t shape_Omega[2] = {data->n_functions, data->tau_size};
+    h_err = H5Sset_extent_simple(h_space, rank, shape_Omega, shape_Omega);
+    if (h_err < 0) printf("Error while changing data space shape.");
+
+    /* Create dataset */
+    h_data = H5Dcreate(h_grp, "Omegas", H5T_NATIVE_DOUBLE, h_space,
+                       H5P_DEFAULT, h_prop, H5P_DEFAULT);
+    if (h_data < 0)
+    printf("Error while creating dataspace '%s'.", "Omegas");
+
+    /* Write temporary buffer to HDF5 dataspace */
+    h_err = H5Dwrite(h_data, H5T_NATIVE_DOUBLE, h_space, H5S_ALL, H5P_DEFAULT, data->Omega);
+    if (h_err < 0) printf("Error while writing data array '%s'.", "data->Omega");
 
     /* Close the dataset */
     H5Dclose(h_data);

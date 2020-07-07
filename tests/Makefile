@@ -41,6 +41,9 @@ all:
 	$(GCC) test_derivatives.c -o test_derivatives $(OBJECTS) $(LIBRARIES) $(CFLAGS) $(INCLUDES)
 	@./test_derivatives
 
+	$(GCC) test_omegas.c -o test_omegas $(OBJECTS) $(LIBRARIES) $(CFLAGS) $(INCLUDES)
+	@./test_omegas
+
 	$(GCC) test_hdf5.c -o test_hdf5 $(OBJECTS) $(LIBRARIES) $(CFLAGS) $(INCLUDES)
 	rm -f test.hdf5
 	@./test_hdf5

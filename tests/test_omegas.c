@@ -55,44 +55,15 @@ int main() {
 
     /* Initialize the CLASS title/index dictionary */
     assert(initClassTitles(&titles, &pt, &ba) == 0);
-
     /* Match titles */
     assert(matchClassTitles(&titles, &pars) == 0);
+    /* Clean up the dictionary */
+    assert(cleanClassTitles(&titles) == 0);
 
-    /* Check that the matches were successful as expected. */
-    assert(pars.NumDesiredFunctions == 8);
-    assert(pars.MatchedFunctions == 4);
-    assert(strcmp(pars.DesiredFunctions[0], "d_cdm") == 0);
-    assert(strcmp(pars.DesiredFunctions[1], "H_T_Nb_prime") == 0);
-    assert(strcmp(pars.DesiredFunctions[2], "eta_prime") == 0);
-    assert(strcmp(pars.DesiredFunctions[3], "d_cdm_prime") == 0);
-    assert(strcmp(pars.DesiredFunctions[4], "h_prime") == 0);
-    assert(strcmp(pars.DesiredFunctions[7], "H_T_Nb_prime_prime") == 0);
-    assert(pars.ClassPerturbIndices[0] == pt.index_tp_delta_cdm);
-    assert(pars.ClassPerturbIndices[1] == pt.index_tp_H_T_Nb_prime);
-    assert(pars.ClassPerturbIndices[2] == pt.index_tp_eta_prime);
-    assert(pars.ClassPerturbIndices[4] == pt.index_tp_h_prime);
-
-    /* Check that only d_cdm_prime is a new derivative */
-    assert(isNewDerivativeTitle(&pars, pars.DesiredFunctions[0]) == -1);
-    assert(isNewDerivativeTitle(&pars, pars.DesiredFunctions[1]) == -1);
-    assert(isNewDerivativeTitle(&pars, pars.DesiredFunctions[2]) == -1);
-    assert(isNewDerivativeTitle(&pars, pars.DesiredFunctions[3]) == 0);
-    assert(isNewDerivativeTitle(&pars, pars.DesiredFunctions[4]) == -1);
-    assert(isNewDerivativeTitle(&pars, pars.DesiredFunctions[5]) == -1);
-    assert(isNewDerivativeTitle(&pars, pars.DesiredFunctions[6]) == -1);
-    assert(isNewDerivativeTitle(&pars, pars.DesiredFunctions[7]) == 1);
 
     /* Read perturb data */
     assert(readPerturbData(&data, &pars, &us, &pt, &ba) == 0);
 
-    printf("Successfully read primary data.\n");
-
-    /* Compute derivatives */
-    assert(computeDerivatives(&data, &pars, &us) == 0);
-
-    /* Checks */
-    assert(pars.MatchedFunctions == 6); //now one more, because derivative!
     assert(data.n_functions == pars.MatchedFunctions);
     assert(data.k_size > 100);
     assert(data.tau_size > 100);
@@ -110,27 +81,36 @@ int main() {
         assert(data.delta[i] != 0);
     }
 
-    /* Check that integrating the derivative gives back the input */
-    assert(strcmp(pars.DesiredFunctions[0], "d_cdm") == 0); //input
-    assert(strcmp(pars.DesiredFunctions[3], "d_cdm_prime") == 0); //computed
-    int source_index = 0;
-    int deriv_index = 4; //confusingly, the derivatives come after the CLASS functions
-    for (int i=0; i<data.k_size; i++) {
-        double start = data.delta[data.tau_size * data.k_size * source_index + i];
-        double integral = start;
-        for (int j=0; j<data.tau_size-1; j++) {
-            double dt = exp(data.log_tau[j+1]) - exp(data.log_tau[j]);
-            double deriv = data.delta[data.tau_size * data.k_size * deriv_index + data.k_size*j + i];
-            double expected = data.delta[data.tau_size * data.k_size * source_index + data.k_size*j + i];
-            integral += dt * deriv;
+    /* Check that the cdm density transfer function is positive */
+    assert(strcmp(pars.DesiredFunctions[0], "d_cdm") == 0);
+    int our_index_for_d_cdm = 0; // not the CLASS index
+    for (int i=0; i<data.k_size * data.tau_size; i++) {
+        assert(data.delta[data.tau_size * data.k_size * our_index_for_d_cdm + i] > 0);
+    }
 
-            /* Enforece small error margin */
-            assert(fabs(integral - expected)/expected < 0.03);
+    printf("We have read out %d functions.\n", data.n_functions);
+    printf("For %d functions, we also have non-zero Omega(tau).\n", pars.MatchedWithBackground);
+
+    /* Check that the cdm background densities are all positive */
+    for (int i=0; i<data.tau_size; i++) {
+        assert(data.Omega[data.tau_size * our_index_for_d_cdm + i] > 0);
+    }
+
+    /* Check that the present-day cdm density makes sense */
+    int present_day_index = data.tau_size - 1;
+    assert((data.Omega[data.tau_size * our_index_for_d_cdm + present_day_index] - 0.26377065934) / 0.26377065934  < 1e-3);
+
+    /* Check that all other functions have zero density */
+    for (int i=0; i<data.n_functions; i++) {
+        if (i == our_index_for_d_cdm) continue; //skip d_cdm
+
+        for (int tau_index=0; tau_index<data.tau_size; tau_index++) {
+            assert(data.Omega[data.tau_size * i + tau_index] == 0);
         }
     }
 
-
-    printf("We have read out %d functions.\n", data.n_functions);
+    /* Write it to a file */
+    // assert(write_perturb(&data, &pars, &us, pars.OutputFilename) == 0);
 
     /* Clean perturb data */
     assert(cleanPerturbData(&data) == 0);
@@ -139,8 +119,12 @@ int main() {
 
     printf("\nShutting CLASS down again.\n");
 
-    /* Clean up the dictionary */
-    assert(cleanClassTitles(&titles) == 0);
+    /* Pre-empt segfault in CLASS if there is no interacting dark radiation */
+    if (ba.has_idr == _FALSE_) {
+        pt.alpha_idm_dr = (double *)malloc(0);
+        pt.beta_idr = (double *)malloc(0);
+    }
+
 
     /* Close CLASS again */
     assert(perturb_free(&pt) == _SUCCESS_);
@@ -150,5 +134,5 @@ int main() {
     /* Clean up */
     cleanParams(&pars);
 
-    sucmsg("test_derivatives:\t SUCCESS");
+    sucmsg("test_omegas:\t SUCCESS");
 }

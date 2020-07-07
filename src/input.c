@@ -52,7 +52,8 @@ int readParams(struct params *pars, const char *fname) {
     /* Allocate memory for the array of the titles */
     pars->NumDesiredFunctions = num;
     pars->DesiredFunctions = malloc(num * sizeof(char*));
-    pars->IndexOfFunctions = malloc(num * sizeof(int));
+    pars->ClassPerturbIndices = malloc(num * sizeof(int));
+    pars->ClassBackgroundIndices = malloc(num * sizeof(int));
 
     /* Rewind and actually read out the titles */
     read = 0;
@@ -94,7 +95,8 @@ int cleanParams(struct params *parser) {
         free(parser->DesiredFunctions[i]);
     }
     free(parser->DesiredFunctions);
-    free(parser->IndexOfFunctions);
+    free(parser->ClassPerturbIndices);
+    free(parser->ClassBackgroundIndices);
     free(parser->OutputFilename);
     free(parser->Name);
     free(parser->ClassIniFile);

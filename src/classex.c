@@ -98,6 +98,7 @@ int main(int argc, char *argv[]) {
     readPerturbData(&data, &pars, &us, &pt, &ba);
 
     printf("We have read out %d functions.\n", data.n_functions);
+    printf("For %d functions, we also have non-zero Omega(tau).\n", pars.MatchedWithBackground);
 
     /* Compute derivatives */
     computeDerivatives(&data, &pars, &us);

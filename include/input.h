@@ -41,9 +41,11 @@ struct params {
     /* Output parameters */
     char *OutputFilename;
     char **DesiredFunctions; //titles of columns that need to be exported
-    int *IndexOfFunctions; //the corresponding CLASS indices
+    int *ClassPerturbIndices; //the corresponding CLASS perturb indices
+    int *ClassBackgroundIndices; //the CLASS indices of some background quantities
     int NumDesiredFunctions; //the number of requested functions
     int MatchedFunctions; //the number of functions with data
+    int MatchedWithBackground; //# of matched f's that also have a bg quantity
 };
 
 struct units {

@@ -64,16 +64,16 @@ int main() {
     for (int i=0; i<titles.num; i++) {
         if (strcmp(titles.pairs[i].title, "d_g") == 0) {
             found_d_g = 1;
-            assert(titles.pairs[i].index == pt.index_tp_delta_g);
+            assert(titles.pairs[i].pt_index == pt.index_tp_delta_g);
         } else if (strcmp(titles.pairs[i].title, "t_idr") == 0) {
             found_t_idr = 1;
-            assert(titles.pairs[i].index == pt.index_tp_theta_idr);
+            assert(titles.pairs[i].pt_index == pt.index_tp_theta_idr);
         } else if (strcmp(titles.pairs[i].title, "d_ncdm[2]") == 0) {
             found_d_ncdm_2 = 1;
-            assert(titles.pairs[i].index == pt.index_tp_delta_ncdm1 + 2);
+            assert(titles.pairs[i].pt_index == pt.index_tp_delta_ncdm1 + 2);
         } else if (strcmp(titles.pairs[i].title, "H_T_Nb_prime") == 0) {
             found_H_T_Nb_prime = 1;
-            assert(titles.pairs[i].index == pt.index_tp_H_T_Nb_prime);
+            assert(titles.pairs[i].pt_index == pt.index_tp_H_T_Nb_prime);
         }
     }
 
@@ -92,10 +92,10 @@ int main() {
     assert(strcmp(pars.DesiredFunctions[1], "H_T_Nb_prime") == 0);
     assert(strcmp(pars.DesiredFunctions[2], "eta_prime") == 0);
     assert(strcmp(pars.DesiredFunctions[4], "h_prime") == 0);
-    assert(pars.IndexOfFunctions[0] == pt.index_tp_delta_cdm);
-    assert(pars.IndexOfFunctions[1] == pt.index_tp_H_T_Nb_prime);
-    assert(pars.IndexOfFunctions[2] == pt.index_tp_eta_prime);
-    assert(pars.IndexOfFunctions[4] == pt.index_tp_h_prime);
+    assert(pars.ClassPerturbIndices[0] == pt.index_tp_delta_cdm);
+    assert(pars.ClassPerturbIndices[1] == pt.index_tp_H_T_Nb_prime);
+    assert(pars.ClassPerturbIndices[2] == pt.index_tp_eta_prime);
+    assert(pars.ClassPerturbIndices[4] == pt.index_tp_h_prime);
 
     /* Clean up the dictionary */
     assert(cleanClassTitles(&titles) == 0);

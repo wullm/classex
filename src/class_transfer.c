@@ -55,6 +55,9 @@ int readPerturbData(struct perturb_data *data, struct params *pars,
     /* Vector with the transfer functions T(tau, k) */
     data->delta = (double *)calloc(n_functions * k_size * tau_size, sizeof(double));
 
+    /* Vector of background quantities at each time Omega(tau) */
+    data->Omega = (double *)calloc(n_functions * tau_size, sizeof(double));
+
     /* Read out the log conformal times */
     for (size_t index_tau = 0; index_tau < tau_size; index_tau++) {
         /* Convert tau from Mpc to U_T */
@@ -77,7 +80,7 @@ int readPerturbData(struct perturb_data *data, struct params *pars,
     /* Convert and store the transfer functions */
     for (size_t i = 0; i < pars->NumDesiredFunctions; i++) {
         /* Ignore functions that have no matching CLASS index */
-        if (pars->IndexOfFunctions[i] < 0) continue;
+        if (pars->ClassPerturbIndices[i] < 0) continue;
 
         /* Determine the unit conversion factor */
         char *title = pars->DesiredFunctions[i];
@@ -89,7 +92,7 @@ int readPerturbData(struct perturb_data *data, struct params *pars,
         for (size_t index_tau = 0; index_tau < tau_size; index_tau++) {
             for (size_t index_k = 0; index_k < k_size; index_k++) {
                 /* Transfer the corresponding data */
-                index_tp = pars->IndexOfFunctions[i];  // CLASS index
+                index_tp = pars->ClassPerturbIndices[i];  // CLASS index
                 double p = pt->sources[index_md][index_ic * pt->tp_size[index_md] +
                                                 index_tp][index_tau * k_size + index_k];
 
@@ -110,22 +113,22 @@ int readPerturbData(struct perturb_data *data, struct params *pars,
 
     printf("\n");
 
-    /* Finally, we also want to get the redshifts. To do this, we need
-     * to let CLASS populate a vector of background quantities at each
-     * time step.
+    /* Finally, we also want to get the redshifts and background densities.
+     * To do this, we need to let CLASS populate a vector of background
+     * quantities at each time step.
      */
 
-    /* Allocate array for background quantities, most of which are not used */
-    double *pvecback = malloc(ba->bg_size_normal*sizeof(double));
+    /* Allocate array for background quantities */
+    double *pvecback = malloc(ba->bg_size * sizeof(double));
     int last_index; //not used, but is output by CLASS
 
-    /* Read out the redshifts */
+    /* Read out the redshifts and background densities */
     for (size_t index_tau = 0; index_tau < tau_size; index_tau++) {
         /* Conformal time in Mpc/c (the internal time unit in CLASS) */
         double tau = pt->tau_sampling[index_tau];
 
         /* Make CLASS evaluate background quantities at this time*/
-        background_at_tau(ba, tau, ba->short_info, ba->inter_normal,
+        background_at_tau(ba, tau, ba->bg_size, ba->inter_normal,
                           &last_index, pvecback);
 
         /* The scale-factor and redshift */
@@ -134,6 +137,32 @@ int readPerturbData(struct perturb_data *data, struct params *pars,
 
         /* Store the redshift */
         data->redshift[index_tau] = z;
+
+        /* The critical density at this redshift */
+        double rho_crit = pvecback[ba->index_bg_rho_crit];
+
+        /* Read out the background densities */
+        int index_func = 0;
+        for (size_t i = 0; i < pars->NumDesiredFunctions; i++) {
+            /* Ignore functions that have no matching CLASS perturbation index */
+            if (pars->ClassPerturbIndices[i] < 0) continue;
+
+            /* For functions that also have a CLASS background index */
+            if (pars->ClassBackgroundIndices[i] >= 0) {
+                /* The density corresponding to this function */
+                double rho = pvecback[pars->ClassBackgroundIndices[i]];
+
+                /* The density, as fraction of the critical density */
+                double Omega = rho/rho_crit;
+
+                /* Store the dimensionless background density */
+                data->Omega[tau_size * index_func + index_tau] = Omega;
+            } else {
+                //We just store zero, to keep it simple. The memory was calloc'ed.
+            }
+
+            index_func++;
+        }
     }
 
     free(pvecback);
@@ -185,6 +214,7 @@ int cleanPerturbData(struct perturb_data *data) {
     free(data->k);
     free(data->log_tau);
     free(data->redshift);
+    free(data->Omega);
 
     return 0;
 }

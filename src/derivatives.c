@@ -42,7 +42,7 @@ int isNewDerivativeTitle(struct params *pars, char *title) {
     char isnew = 0;
     for (int i=0; i<pars->NumDesiredFunctions; i++) {
         if (strcmp(pars->DesiredFunctions[i], title) == 0
-            && pars->IndexOfFunctions[i] < 0) { //new, i.e. has no matching index
+            && pars->ClassPerturbIndices[i] < 0) { //new, i.e. has no matching index
             isnew = 1;
         }
     }
@@ -54,7 +54,7 @@ int isNewDerivativeTitle(struct params *pars, char *title) {
     int matched_index = -1;
     int count = 0;
     for (int i=0; i<pars->NumDesiredFunctions; i++) {
-        if (pars->IndexOfFunctions[i] >= 0) { //function exists, has index
+        if (pars->ClassPerturbIndices[i] >= 0) { //function exists, has index
             /* Does it match XXX? */
             if (strncmp(pars->DesiredFunctions[i], title, strlen(title)-7) == 0) {
                 matched_index = count;
@@ -84,6 +84,14 @@ int computeDerivatives(struct perturb_data *data, struct params *pars,
     data->n_functions += derivatives;
     pars->MatchedFunctions += derivatives;
     data->delta = realloc(data->delta, data->n_functions * data->k_size * data->tau_size * sizeof(double));
+
+    /* Also expand the Omega array, to keep the data structure simple */
+    data->Omega = realloc(data->Omega, data->n_functions * data->tau_size * sizeof(double));
+
+    /* Just fill the rest of the Omega array with zeros */
+    int end_of_original_array = (data->n_functions - derivatives) * data->tau_size;
+    int additional_elements = derivatives * data->tau_size;
+    memset(data->Omega + end_of_original_array, 0, additional_elements * sizeof(double));
 
     printf("Computing %d extra derivatives.\n", derivatives);
 

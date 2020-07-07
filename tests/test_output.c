@@ -181,7 +181,7 @@ int main() {
     for (int i=0; i<pars.NumDesiredFunctions; i++) {
         /* Ignore unknown functions (without matching CLASS index),
          * which should not be in the file, except for derivatives */
-        if (pars.IndexOfFunctions[i] >= 0) {
+        if (pars.ClassPerturbIndices[i] >= 0) {
             assert(strcmp(pars.DesiredFunctions[i], read_titles[j]) == 0);
             printf("Checked '%s'.\n", read_titles[j]);
             j++;

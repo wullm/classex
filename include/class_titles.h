@@ -26,7 +26,8 @@
 #define MAX_NUM_FUNCTIONS 100
 
 struct index_title {
-    int index;
+    int pt_index; //CLASS perturbation index (always used)
+    int ba_index; //CLASS background index (sometimes used)
     char *title;
 };
 
@@ -36,8 +37,9 @@ struct class_titles {
 };
 
 /* Adds index to indices, adds title to titles, increments the counter by one. */
-static inline void store_title(struct index_title **pairs, int index, char *title, int *i) {
-    (*pairs + *i)->index = index;
+static inline void store_title(struct index_title **pairs, int pt_index, int ba_index, char *title, int *i) {
+    (*pairs + *i)->pt_index = pt_index;
+    (*pairs + *i)->ba_index = ba_index;
     (*pairs + *i)->title = malloc(strlen(title) + 1);
     strcpy((*pairs + *i)->title, title);
     *i  = *i + 1;
