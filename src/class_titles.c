@@ -21,6 +21,7 @@
 
 /* Simply create a dictionary between CLASS title strings and indices */
 int initClassTitles(struct class_titles *cat, struct perturbs *pt, struct background *ba) {
+    cat->num = 0;
     cat->pairs = malloc(MAX_NUM_FUNCTIONS * sizeof(struct index_title));
     if (cat->pairs == NULL) return 1;
 
