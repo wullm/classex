@@ -103,6 +103,23 @@ int main(int argc, char *argv[]) {
     /* Compute derivatives */
     computeDerivatives(&data, &pars, &us);
 
+    /* Retrieve the number of ncdm species and their masses in eV */
+    pars.N_ncdm = ba.N_ncdm;
+    pars.M_ncdm_eV = ba.m_ncdm_in_eV;
+    pars.T_CMB = ba.T_cmb * us.UnitTemperatureKelvin;
+    pars.T_ncdm = ba.T_ncdm;
+    pars.h = ba.h;
+    pars.Omega_lambda = ba.Omega0_lambda;
+    pars.Omega_k = ba.Omega0_k;
+    pars.Omega_m = ba.Omega0_m;
+    pars.Omega_b = ba.Omega0_b;
+    pars.Omega_ur = ba.Omega0_ur;
+
+    /* Here neutrinos do not contribute to Omega_m, but in CLASS they do */
+    for (int i=0; i<pars.N_ncdm; i++) {
+        pars.Omega_m -= ba.Omega0_ncdm[i];
+    }
+
     /* Write it to a file */
     write_perturb(&data, &pars, &us, pars.OutputFilename);
 

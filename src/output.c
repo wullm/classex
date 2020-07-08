@@ -62,6 +62,7 @@ int write_perturb(struct perturb_data *data, struct params *pars,
     double unit_mass_cgs = us->UnitMassKilogram * 1000;
     double unit_length_cgs = us->UnitLengthMetres * 100;
     double unit_time_cgs = us->UnitTimeSeconds;
+    double unit_temperature_cgs = us->UnitTemperatureKelvin;
 
     /* Write the internal unit system */
     h_attr = H5Acreate1(h_grp, "Unit mass in cgs (U_M)", H5T_NATIVE_DOUBLE, h_space, H5P_DEFAULT);
@@ -74,6 +75,10 @@ int write_perturb(struct perturb_data *data, struct params *pars,
 
     h_attr = H5Acreate1(h_grp, "Unit time in cgs (U_t)", H5T_NATIVE_DOUBLE, h_space, H5P_DEFAULT);
     h_err = H5Awrite(h_attr, H5T_NATIVE_DOUBLE, &unit_time_cgs);
+    H5Aclose(h_attr);
+
+    h_attr = H5Acreate1(h_grp, "Unit temperature in cgs (U_T)", H5T_NATIVE_DOUBLE, h_space, H5P_DEFAULT);
+    h_err = H5Awrite(h_attr, H5T_NATIVE_DOUBLE, &unit_temperature_cgs);
     H5Aclose(h_attr);
 
     /* For strings, we need to prepare a datatype */
@@ -133,6 +138,76 @@ int write_perturb(struct perturb_data *data, struct params *pars,
 
     /* Close header */
     H5Gclose(h_grp);
+
+    /* Create the Cosmology group */
+    h_grp = H5Gcreate(h_file, "/Cosmology", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+    if (h_grp < 0) printf("Error while creating Cosmology group\n");
+
+    /* Create scalar value dataspace */
+    h_space = H5Screate(H5S_SIMPLE);
+    H5Sset_extent_simple(h_space, ndims, dim, NULL);
+
+    /* Write the CMB temperature */
+    h_attr = H5Acreate1(h_grp, "T_CMB (U_T)", H5T_NATIVE_DOUBLE, h_space, H5P_DEFAULT);
+    h_err = H5Awrite(h_attr, H5T_NATIVE_DOUBLE, &pars->T_CMB);
+    H5Aclose(h_attr);
+
+    /* Write the Hubble parameter in units of 100 km/s/Mpc */
+    h_attr = H5Acreate1(h_grp, "h", H5T_NATIVE_DOUBLE, h_space, H5P_DEFAULT);
+    h_err = H5Awrite(h_attr, H5T_NATIVE_DOUBLE, &pars->h);
+    H5Aclose(h_attr);
+
+    /* Write the present dark energy density as fraction of the critical density */
+    h_attr = H5Acreate1(h_grp, "Omega_lambda", H5T_NATIVE_DOUBLE, h_space, H5P_DEFAULT);
+    h_err = H5Awrite(h_attr, H5T_NATIVE_DOUBLE, &pars->Omega_lambda);
+    H5Aclose(h_attr);
+
+    /* Write the curvature density parameter */
+    h_attr = H5Acreate1(h_grp, "Omega_k", H5T_NATIVE_DOUBLE, h_space, H5P_DEFAULT);
+    h_err = H5Awrite(h_attr, H5T_NATIVE_DOUBLE, &pars->Omega_k);
+    H5Aclose(h_attr);
+
+    /* Write the present energy density of total matter (excluding ncdm) */
+    h_attr = H5Acreate1(h_grp, "Omega_m", H5T_NATIVE_DOUBLE, h_space, H5P_DEFAULT);
+    h_err = H5Awrite(h_attr, H5T_NATIVE_DOUBLE, &pars->Omega_m);
+    H5Aclose(h_attr);
+
+    /* Write the present energy density of baryons */
+    h_attr = H5Acreate1(h_grp, "Omega_b", H5T_NATIVE_DOUBLE, h_space, H5P_DEFAULT);
+    h_err = H5Awrite(h_attr, H5T_NATIVE_DOUBLE, &pars->Omega_b);
+    H5Aclose(h_attr);
+
+    /* Write the present energy density of ultra-relativistic species (excluding photons) */
+    h_attr = H5Acreate1(h_grp, "Omega_ur", H5T_NATIVE_DOUBLE, h_space, H5P_DEFAULT);
+    h_err = H5Awrite(h_attr, H5T_NATIVE_DOUBLE, &pars->Omega_ur);
+    H5Aclose(h_attr);
+
+    /* Write the total number of ncdm species in the cosmology (not all are necessarily exported) */
+    h_attr = H5Acreate1(h_grp, "N_ncdm", H5T_NATIVE_INT, h_space, H5P_DEFAULT);
+    h_err = H5Awrite(h_attr, H5T_NATIVE_INT, &pars->N_ncdm);
+    H5Aclose(h_attr);
+
+    /* Resize the dataspace to allow for N_ncdm different masses */
+    hsize_t dim_ncdm[1] = {pars->N_ncdm};
+    H5Sset_extent_simple(h_space, ndims, dim_ncdm, NULL);
+
+    /* Write the mass of each ncdm species in the cosmology */
+    h_attr = H5Acreate1(h_grp, "M_ncdm (eV)", H5T_NATIVE_DOUBLE, h_space, H5P_DEFAULT);
+    h_err = H5Awrite(h_attr, H5T_NATIVE_DOUBLE, pars->M_ncdm_eV);
+    H5Aclose(h_attr);
+
+    /* Write the present temperature of each ncdm species (as fraction of T_CMB) */
+    h_attr = H5Acreate1(h_grp, "T_ncdm (T_CMB)", H5T_NATIVE_DOUBLE, h_space, H5P_DEFAULT);
+    h_err = H5Awrite(h_attr, H5T_NATIVE_DOUBLE, pars->T_ncdm);
+    H5Aclose(h_attr);
+
+    /* Done with the dataspace */
+    H5Sclose(h_space);
+
+    /* Close Cosmology group */
+    H5Gclose(h_grp);
+
+
 
     /* Open group to write the perturbation arrays */
     h_grp = H5Gcreate(h_file, "/Perturb", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);

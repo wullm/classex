@@ -46,12 +46,27 @@ struct params {
     int NumDesiredFunctions; //the number of requested functions
     int MatchedFunctions; //the number of functions with data
     int MatchedWithBackground; //# of matched f's that also have a bg quantity
+
+    /* Parameters transferred from CLASS */
+    int N_ncdm; //number of non-cold dark matter species (neutrinos)
+    double *M_ncdm_eV; //masses of the ncdm particles in eV
+    double *T_ncdm; //temperatures as fraction of T_CMB
+    double T_CMB; //temperature in U_T
+    double h; //Hubble parameter
+
+    /* NB: Individual Omegas of fluid components are stored in ptdat */
+    double Omega_lambda;
+    double Omega_k;
+    double Omega_m;
+    double Omega_b;
+    double Omega_ur;
 };
 
 struct units {
     double UnitLengthMetres;
     double UnitTimeSeconds;
     double UnitMassKilogram;
+    double UnitTemperatureKelvin;
 
     /* Physical constants in internal units */
     double SpeedOfLight;
