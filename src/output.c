@@ -187,20 +187,23 @@ int write_perturb(struct perturb_data *data, struct params *pars,
     h_err = H5Awrite(h_attr, H5T_NATIVE_INT, &pars->N_ncdm);
     H5Aclose(h_attr);
 
-    /* Resize the dataspace to allow for N_ncdm different masses */
-    hsize_t dim_ncdm[1] = {pars->N_ncdm};
-    H5Sset_extent_simple(h_space, ndims, dim_ncdm, NULL);
+    /* If we have at least one neutrino, write some attributes for each neutrino species */
+    if (pars->N_ncdm > 0) {
+        /* Resize the dataspace to allow for N_ncdm different masses */
+        hsize_t dim_ncdm[1] = {pars->N_ncdm};
+        H5Sset_extent_simple(h_space, ndims, dim_ncdm, NULL);
 
-    /* Write the mass of each ncdm species in the cosmology */
-    h_attr = H5Acreate1(h_grp, "M_ncdm (eV)", H5T_NATIVE_DOUBLE, h_space, H5P_DEFAULT);
-    h_err = H5Awrite(h_attr, H5T_NATIVE_DOUBLE, pars->M_ncdm_eV);
-    H5Aclose(h_attr);
+        /* Write the mass of each ncdm species in the cosmology */
+        h_attr = H5Acreate1(h_grp, "M_ncdm (eV)", H5T_NATIVE_DOUBLE, h_space, H5P_DEFAULT);
+        h_err = H5Awrite(h_attr, H5T_NATIVE_DOUBLE, pars->M_ncdm_eV);
+        H5Aclose(h_attr);
 
-    /* Write the present temperature of each ncdm species (as fraction of T_CMB) */
-    h_attr = H5Acreate1(h_grp, "T_ncdm (T_CMB)", H5T_NATIVE_DOUBLE, h_space, H5P_DEFAULT);
-    h_err = H5Awrite(h_attr, H5T_NATIVE_DOUBLE, pars->T_ncdm);
-    H5Aclose(h_attr);
-
+        /* Write the present temperature of each ncdm species (as fraction of T_CMB) */
+        h_attr = H5Acreate1(h_grp, "T_ncdm (T_CMB)", H5T_NATIVE_DOUBLE, h_space, H5P_DEFAULT);
+        h_err = H5Awrite(h_attr, H5T_NATIVE_DOUBLE, pars->T_ncdm);
+        H5Aclose(h_attr);
+    }
+    
     /* Done with the dataspace */
     H5Sclose(h_space);
 
