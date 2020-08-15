@@ -366,7 +366,7 @@ int write_perturb(struct perturb_data *data, struct params *pars,
 
     /* Set the extent of the transfer function data */
     rank = 3;
-    hsize_t shape_delta[3] = {data->n_functions, data->k_size, data->tau_size};
+    hsize_t shape_delta[3] = {data->n_functions, data->tau_size, data->k_size};
     h_err = H5Sset_extent_simple(h_space, rank, shape_delta, shape_delta);
     if (h_err < 0) printf("Error while changing data space shape.");
 
