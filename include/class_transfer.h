@@ -33,6 +33,13 @@ struct perturb_data {
   double *log_tau;
   double *redshift;
   double *Omega;
+  double *Omega_m;
+  double *Omega_r;
+  double *Hubble_H;
+  double *Hubble_H_prime;
+  double *growth_D;
+  double *growth_f;
+  double *growth_f_prime;
   // char **titles;
 };
 

@@ -48,6 +48,13 @@ int readPerturbData(struct perturb_data *data, struct params *pars,
     data->tau_size = tau_size;
     data->log_tau = (double *)calloc(tau_size, sizeof(double));
     data->redshift = (double *)calloc(tau_size, sizeof(double));
+    data->Omega_m = (double *)calloc(tau_size, sizeof(double));
+    data->Omega_r = (double *)calloc(tau_size, sizeof(double));
+    data->Hubble_H = (double *)calloc(tau_size, sizeof(double));
+    data->Hubble_H_prime = (double *)calloc(tau_size, sizeof(double));
+    data->growth_D = (double *)calloc(tau_size, sizeof(double));
+    data->growth_f = (double *)calloc(tau_size, sizeof(double));
+    data->growth_f_prime = (double *)calloc(tau_size, sizeof(double));
 
     /* The number of transfer functions to be read */
     data->n_functions = n_functions;
@@ -135,11 +142,40 @@ int readPerturbData(struct perturb_data *data, struct params *pars,
         double a = pvecback[ba->index_bg_a];
         double z = 1./a - 1.;
 
+        /* The critical density at this redshift in CLASS units */
+        double rho_crit = pvecback[ba->index_bg_rho_crit];
+        double Omega_m = pvecback[ba->index_bg_Omega_m];
+        double Omega_r = pvecback[ba->index_bg_Omega_r];
+
+        /* Retrieve background quantities in CLASS units */
+        double H = pvecback[ba->index_bg_H];
+        double H_prime = pvecback[ba->index_bg_H_prime];
+        double D = pvecback[ba->index_bg_D];
+        double f = pvecback[ba->index_bg_f];
+        double D_prime = f * a * H * D;
+        double rho_M = rho_crit * Omega_m;
+        double a_prime = a*a*H;
+        /* D' = f*a*H*D and D'' = -a*H*D' + 1.5*a^2*rho_M*D */
+        double D_prime_prime = -a*H*D_prime + 1.5*a*a*rho_M*D;
+        double f_prime = D_prime_prime / (a*H*D) - (a_prime*H*D
+                       + a*H_prime*D + a*H*D_prime)*D_prime/(a*a*H*H*D*D);
+
         /* Store the redshift */
         data->redshift[index_tau] = z;
 
-        /* The critical density at this redshift */
-        double rho_crit = pvecback[ba->index_bg_rho_crit];
+        /* The Hubble constant in 1/U_T and its conformal derivative in 1/U_T^2 */
+        data->Hubble_H[index_tau] = H / unit_time_factor;
+        data->Hubble_H_prime[index_tau] = H_prime / pow(unit_time_factor,2);
+
+        /* The growth factor and logarithmic growth rate */
+        data->growth_D[index_tau] = D;
+        data->growth_f[index_tau] = f;
+        /* The growth rate derivative in 1/U_T^2 */
+        data->growth_f_prime[index_tau] = f_prime / unit_time_factor;
+
+        /* Overall background densisities in matter and radiation */
+        data->Omega_m[index_tau] = Omega_m;
+        data->Omega_r[index_tau] = Omega_r;
 
         /* Read out the background densities */
         int index_func = 0;
@@ -149,10 +185,10 @@ int readPerturbData(struct perturb_data *data, struct params *pars,
 
             /* For functions that also have a CLASS background index */
             if (pars->ClassBackgroundIndices[i] >= 0) {
-                /* The density corresponding to this function */
+                /* The density corresponding to this function (CLASS units) */
                 double rho = pvecback[pars->ClassBackgroundIndices[i]];
 
-                /* The density, as fraction of the critical density */
+                /* Fraction of the critical density (dimensionless) */
                 double Omega = rho/rho_crit;
 
                 /* Store the dimensionless background density */
@@ -165,8 +201,66 @@ int readPerturbData(struct perturb_data *data, struct params *pars,
         }
     }
 
+    /* Done with the CLASS background vector */
     free(pvecback);
 
+    /* Compute finite difference approximations as consistency check */
+    for (size_t index_tau = 1; index_tau < tau_size-1; index_tau++) {
+        /* Use central difference */
+        int first_index = -1;
+        int second_index = +1;
+
+        /* Collect values */
+        double f0 = data->growth_f[index_tau + first_index];
+        double f1 = data->growth_f[index_tau + second_index];
+        double H0 = data->Hubble_H[index_tau + first_index];
+        double H1 = data->Hubble_H[index_tau + second_index];
+        double D0 = data->growth_D[index_tau + first_index];
+        double D1 = data->growth_D[index_tau + second_index];
+        double z0 = data->redshift[index_tau + first_index];
+        double z1 = data->redshift[index_tau + second_index];
+        double a0 = 1.0/(z0 + 1.0);
+        double a1 = 1.0/(z1 + 1.0);
+        double tau0 = exp(data->log_tau[index_tau + first_index]);
+        double tau1 = exp(data->log_tau[index_tau + second_index]);
+
+        /* Finite difference approximations */
+        double f_prime_fd = (f1 - f0)/(tau1 - tau0);
+        double H_prime_fd = (H1 - H0)/(tau1 - tau0);
+        double D_prime_fd = (D1 - D0)/(tau1 - tau0);
+        double a_prime_fd = (a1 - a0)/(tau1 - tau0);
+
+        /* Actual values in the data table */
+        double f_prime = data->growth_f_prime[index_tau];
+        double H_prime = data->growth_f_prime[index_tau];
+        double a = 1.0/(data->redshift[index_tau] + 1.0);
+        double H = data->Hubble_H[index_tau];
+        double f = data->growth_f[index_tau];
+        double D = data->growth_D[index_tau];
+        double D_prime = a*H*f*D;
+        double a_prime = a*a*H;
+
+        /* Do the checks */
+        double tol = 1e-3;
+        double eps_f = fabs(f_prime_fd - f_prime) / (f_prime_fd + f_prime);
+        double eps_H = fabs(H_prime_fd - H_prime) / (H_prime_fd + H_prime);
+        double eps_D = fabs(D_prime_fd - D_prime) / (D_prime_fd + D_prime);
+        double eps_a = fabs(a_prime_fd - a_prime) / (a_prime_fd + a_prime);
+        if (eps_f > tol) {
+            printf("At z=%e, growth rate derivative f' exceeds tolerance, eps=%e > %e.\n", data->redshift[index_tau], eps_f, tol);
+        }
+        if (eps_H > tol) {
+            printf("At z=%e, Hubble rate derivative H' exceeds tolerance, eps=%e > %e.\n", data->redshift[index_tau], eps_H, tol);
+        }
+        if (eps_D > tol) {
+            printf("At z=%e, Hubble rate derivative H' exceeds tolerance, eps=%e > %e.\n", data->redshift[index_tau], eps_D, tol);
+        }
+        if (eps_a > tol) {
+            printf("At z=%e, scale factor derivative a' exceeds tolerance, eps=%e > %e.\n", data->redshift[index_tau], eps_a, tol);
+        }
+    }
+
+    printf("\n");
     printf("The perturbations are sampled at %zu * %zu points.\n", k_size, tau_size);
 
     return 0;
@@ -214,7 +308,14 @@ int cleanPerturbData(struct perturb_data *data) {
     free(data->k);
     free(data->log_tau);
     free(data->redshift);
+    free(data->Omega_m);
+    free(data->Omega_r);
     free(data->Omega);
+    free(data->Hubble_H);
+    free(data->Hubble_H_prime);
+    free(data->growth_D);
+    free(data->growth_f);
+    free(data->growth_f_prime);
 
     return 0;
 }

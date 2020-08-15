@@ -203,7 +203,7 @@ int write_perturb(struct perturb_data *data, struct params *pars,
         h_err = H5Awrite(h_attr, H5T_NATIVE_DOUBLE, pars->T_ncdm);
         H5Aclose(h_attr);
     }
-    
+
     /* Done with the dataspace */
     H5Sclose(h_space);
 
@@ -269,6 +269,97 @@ int write_perturb(struct perturb_data *data, struct params *pars,
     /* Write temporary buffer to HDF5 dataspace */
     h_err = H5Dwrite(h_data, H5T_NATIVE_DOUBLE, h_space, H5S_ALL, H5P_DEFAULT, data->redshift);
     if (h_err < 0) printf("Error while writing data array '%s'.\n", "data->redshift");
+
+    /* Close the dataset */
+    H5Dclose(h_data);
+
+    /* Create dataset with the same extensions */
+    h_data = H5Dcreate(h_grp, "Omega matter", H5T_NATIVE_DOUBLE,
+                       h_space, H5P_DEFAULT, h_prop, H5P_DEFAULT);
+    if (h_data < 0)
+    printf("Error while creating dataspace '%s'.\n", "Omega matter");
+
+    /* Write temporary buffer to HDF5 dataspace */
+    h_err = H5Dwrite(h_data, H5T_NATIVE_DOUBLE, h_space, H5S_ALL, H5P_DEFAULT, data->Omega_m);
+    if (h_err < 0) printf("Error while writing data array '%s'.\n", "data->Omega_m");
+
+    /* Close the dataset */
+    H5Dclose(h_data);
+
+    /* Create dataset with the same extensions */
+    h_data = H5Dcreate(h_grp, "Omega radiation", H5T_NATIVE_DOUBLE,
+                       h_space, H5P_DEFAULT, h_prop, H5P_DEFAULT);
+    if (h_data < 0)
+    printf("Error while creating dataspace '%s'.\n", "Omega radiation");
+
+    /* Write temporary buffer to HDF5 dataspace */
+    h_err = H5Dwrite(h_data, H5T_NATIVE_DOUBLE, h_space, H5S_ALL, H5P_DEFAULT, data->Omega_r);
+    if (h_err < 0) printf("Error while writing data array '%s'.\n", "data->Omega_r");
+
+    /* Close the dataset */
+    H5Dclose(h_data);
+
+    /* Create dataset with the same extensions */
+    h_data = H5Dcreate(h_grp, "Hubble rates", H5T_NATIVE_DOUBLE,
+                       h_space, H5P_DEFAULT, h_prop, H5P_DEFAULT);
+    if (h_data < 0)
+    printf("Error while creating dataspace '%s'.\n", "Hubble rates");
+
+    /* Write temporary buffer to HDF5 dataspace */
+    h_err = H5Dwrite(h_data, H5T_NATIVE_DOUBLE, h_space, H5S_ALL, H5P_DEFAULT, data->Hubble_H);
+    if (h_err < 0) printf("Error while writing data array '%s'.\n", "data->Hubble_H");
+
+    /* Close the dataset */
+    H5Dclose(h_data);
+
+    /* Create dataset with the same extensions */
+    h_data = H5Dcreate(h_grp, "Hubble rate conformal time derivatives", H5T_NATIVE_DOUBLE,
+                       h_space, H5P_DEFAULT, h_prop, H5P_DEFAULT);
+    if (h_data < 0)
+    printf("Error while creating dataspace '%s'.\n", "Hubble rate conformal time derivatives");
+
+    /* Write temporary buffer to HDF5 dataspace */
+    h_err = H5Dwrite(h_data, H5T_NATIVE_DOUBLE, h_space, H5S_ALL, H5P_DEFAULT, data->Hubble_H_prime);
+    if (h_err < 0) printf("Error while writing data array '%s'.\n", "data->Hubble_H_prime");
+
+    /* Close the dataset */
+    H5Dclose(h_data);
+
+    /* Create dataset with the same extensions */
+    h_data = H5Dcreate(h_grp, "Growth factors (D)", H5T_NATIVE_DOUBLE,
+                       h_space, H5P_DEFAULT, h_prop, H5P_DEFAULT);
+    if (h_data < 0)
+    printf("Error while creating dataspace '%s'.\n", "Growth factors (D)");
+
+    /* Write temporary buffer to HDF5 dataspace */
+    h_err = H5Dwrite(h_data, H5T_NATIVE_DOUBLE, h_space, H5S_ALL, H5P_DEFAULT, data->growth_D);
+    if (h_err < 0) printf("Error while writing data array '%s'.\n", "data->growth_D");
+
+    /* Close the dataset */
+    H5Dclose(h_data);
+
+    /* Create dataset with the same extensions */
+    h_data = H5Dcreate(h_grp, "Logarithmic growth rates (f)", H5T_NATIVE_DOUBLE,
+                       h_space, H5P_DEFAULT, h_prop, H5P_DEFAULT);
+    if (h_data < 0)
+    printf("Error while creating dataspace '%s'.\n", "Logarithmic growth rates (f)");
+
+    /* Write temporary buffer to HDF5 dataspace */
+    h_err = H5Dwrite(h_data, H5T_NATIVE_DOUBLE, h_space, H5S_ALL, H5P_DEFAULT, data->growth_f);
+    if (h_err < 0) printf("Error while writing data array '%s'.\n", "data->growth_f");
+
+    /* Close the dataset */
+    H5Dclose(h_data);
+
+    /* Create dataset with the same extensions */
+    h_data = H5Dcreate(h_grp, "Logarithmic growth rate conformal derivatives (f')", H5T_NATIVE_DOUBLE,
+                       h_space, H5P_DEFAULT, h_prop, H5P_DEFAULT);
+    if (h_data < 0)
+    printf("Error while creating dataspace '%s'.\n", "Logarithmic growth rate conformal derivatives (f')");
+
+    /* Write temporary buffer to HDF5 dataspace */
+    h_err = H5Dwrite(h_data, H5T_NATIVE_DOUBLE, h_space, H5S_ALL, H5P_DEFAULT, data->growth_f_prime);
+    if (h_err < 0) printf("Error while writing data array '%s'.\n", "data->growth_f_prime");
 
     /* Close the dataset */
     H5Dclose(h_data);
