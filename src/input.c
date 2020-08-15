@@ -49,6 +49,9 @@ int readParams(struct params *pars, const char *fname) {
         }
     }
 
+    /* Derivative checks tolerance */
+    pars->DerivativeCheckTol = ini_getd("Simulation", "DerivativeCheckTol", 1e-2, fname);
+
     /* Allocate memory for the array of the titles */
     pars->NumDesiredFunctions = num;
     pars->DesiredFunctions = malloc(num * sizeof(char*));

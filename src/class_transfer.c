@@ -241,7 +241,7 @@ int readPerturbData(struct perturb_data *data, struct params *pars,
         double a_prime = a*a*H;
 
         /* Do the checks */
-        double tol = 1e-3;
+        double tol = pars->DerivativeCheckTol;
         double eps_f = fabs(f_prime_fd - f_prime) / (f_prime_fd + f_prime);
         double eps_H = fabs(H_prime_fd - H_prime) / (H_prime_fd + H_prime);
         double eps_D = fabs(D_prime_fd - D_prime) / (D_prime_fd + D_prime);

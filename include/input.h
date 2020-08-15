@@ -54,6 +54,9 @@ struct params {
     double T_CMB; //temperature in U_T
     double h; //Hubble parameter
 
+    /* Parameter used in derivative checks (does not affect output) */
+    double DerivativeCheckTol;
+
     /* NB: Individual Omegas of fluid components are stored in ptdat */
     double Omega_lambda;
     double Omega_k;
