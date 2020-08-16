@@ -51,7 +51,9 @@ int initClassTitles(struct class_titles *cat, struct perturbs *pt, struct backgr
     store_title(&cat->pairs, pt->index_tp_eta_prime, -1, "eta_prime", &cat->num);
     store_title(&cat->pairs, pt->index_tp_H_T_Nb_prime, -1, "H_T_Nb_prime", &cat->num);
     store_title(&cat->pairs, pt->index_tp_k2gamma_Nb, -1, "k2gamma_Nb", &cat->num);
+#ifdef delta_shift_Nb_defined
     store_title(&cat->pairs, pt->index_tp_delta_shift_Nb_m, -1, "delta_shift_Nb_m", &cat->num);
+#endif
 
     store_title(&cat->pairs, pt->index_tp_theta_g, -1, "t_g", &cat->num);
     store_title(&cat->pairs, pt->index_tp_theta_b, -1, "t_b", &cat->num);
@@ -69,6 +71,8 @@ int initClassTitles(struct class_titles *cat, struct perturbs *pt, struct backgr
     store_title(&cat->pairs, pt->index_tp_theta_dr, -1, "t_dr", &cat->num);
     store_title(&cat->pairs, pt->index_tp_theta_scf, -1, "t_scf", &cat->num); //beware: there is a typo here in the current version of CLASS
     store_title(&cat->pairs, pt->index_tp_theta_tot, -1, "t_tot", &cat->num);
+
+#ifdef extra_neutrino_functions_defined
     for (int i=0; i<ba->N_ncdm; i++) {
         char tmp[40];
         sprintf(tmp, "shear_ncdm[%d]", i);
@@ -84,7 +88,7 @@ int initClassTitles(struct class_titles *cat, struct perturbs *pt, struct backgr
         sprintf(tmp, "l3_ncdm[%d]", i);
         store_title(&cat->pairs, pt->index_tp_l3_ncdm1 + i, -1, tmp, &cat->num);
     }
-
+#endif
 
     return 0;
 }
