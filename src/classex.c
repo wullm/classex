@@ -24,10 +24,6 @@
 
 #include "../include/classex.h"
 
-const char *fname;
-
-
-
 int main(int argc, char *argv[]) {
     if (argc == 1) {
         printf("No parameter file specified.\n");

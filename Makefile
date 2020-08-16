@@ -17,7 +17,7 @@ CLASS_LIBRARIES += -L$(PWD)/class -Wl,-rpath=$(PWD)/class
 #Putting it together
 INCLUDES = $(HDF5_INCLUDES) $(CLASS_INCLUDES)
 LIBRARIES = $(INI_PARSER) $(STD_LIBRARIES) $(HDF5_LIBRARIES) $(CLASS_LIBRARIES)
-CFLAGS = -Wall -Ofast -march=native
+CFLAGS = -Wall -Wshadow=global -Ofast -march=native
 
 OBJECTS = lib/*.o
 

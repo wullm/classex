@@ -178,7 +178,7 @@ int readPerturbData(struct perturb_data *data, struct params *pars,
         data->Omega_r[index_tau] = Omega_r;
 
         /* Read out the background densities */
-        int index_func = 0;
+        index_func = 0;
         for (size_t i = 0; i < pars->NumDesiredFunctions; i++) {
             /* Ignore functions that have no matching CLASS perturbation index */
             if (pars->ClassPerturbIndices[i] < 0) continue;
