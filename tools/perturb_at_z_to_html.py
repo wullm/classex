@@ -2,7 +2,7 @@ import sys;
 from tabulate import tabulate;
 
 if (len(sys.argv) < 3):
-    print("Usage: perturb_at_k_to_html.py file redshift");
+    print("Usage: perturb_at_z_to_html.py file redshift<br/>");
 else:
     try:
         z = float(sys.argv[2]);
@@ -16,5 +16,5 @@ else:
         print(htmlcode);
 
     except ValueError:
-        print("Usage: perturb_at_k_to_html.py file wavenumber<br/>");
-        print("Wavenumber is not numeric.");
+        print("Usage: perturb_at_z_to_html.py file redshift<br/>");
+        print("Redshift is not numeric.");

@@ -127,10 +127,44 @@ def cosmology_background():
             col_counter = col_counter + 1;
             columns.append(titlestrings[i]);
 
-    #Get rid of the empry columns
+    #Get rid of the empty columns
     ptarr = ptarr[:col_counter,];
 
     #Transpose the table
     ptarr = ptarr.T;
 
     return(ptarr, columns);
+
+def power_at_redshift(z,A_s,n_s,k_pivot):
+    if (z < redshift.min() or z > redshift.max()):
+        print("z is out of bounds");
+        return("", []);
+    else:
+        lt = log_tau_func(z);
+        Parr = np.zeros((nr_titles + 1, k_size));
+
+        #The first column should be the wavenumbers
+        Parr[0] = k;
+
+        #The column titles
+        columns = ["k"];
+        col_counter = 1;
+        # columns = columns + titlestrings;
+
+        #The other columns should be filled with the functions interpolated to this time
+        for i in np.arange(nr_titles):
+            delta_func = interp2d(log_tau, k, delta[i].T);
+            pt = delta_func(lt, k).reshape(k_size);
+            if (titlestrings[i][0:2] == "d_"):
+                P = A_s * (pt*pt) * (k / k_pivot) ** n_s;
+                Parr[col_counter] = P;
+                columns.append(titlestrings[i]);
+                col_counter = col_counter + 1;
+
+        #Get rid of the empry columns
+        Parr = Parr[:col_counter,];
+
+        #Transpose the table
+        Parr = Parr.T;
+
+        return(Parr, columns);
