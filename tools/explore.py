@@ -37,6 +37,37 @@ def find_title(titlestr):
     else:
         return(titlestrings.index(titlestr));
 
+
+#Add a column with merged cdm & baryon
+if ("d_cdm" in titlestrings and "d_b" in titlestrings):
+    cdm_index = find_title("d_cdm");
+    b_index = find_title("d_b");
+
+    Omega_c = Omegas[cdm_index];
+    Omega_b = Omegas[b_index];
+
+    today_index = -1;
+    Omega_c0 = Omega_c[today_index];
+    Omega_b0 = Omega_b[today_index];
+
+    weight_c = Omega_c0 / (Omega_c0 + Omega_b0);
+    weight_b = Omega_b0 / (Omega_c0 + Omega_b0);
+
+    print("weights [cdm, b] = [", weight_c, ",", weight_b, "]<br/>");
+
+    titlestrings.append("d_cb_merge");
+
+    delta_c = delta[cdm_index];
+    delta_b = delta[b_index];
+
+    delta_cb = weight_c * delta_c + weight_b * delta_b;
+    delta = np.insert(delta, nr_titles, delta_cb, axis=0);
+
+    Omega_cb = Omega_c + Omega_b;
+    Omegas = np.insert(Omegas, nr_titles, Omega_cb, axis=0);
+
+    nr_titles+=1;
+
 #Interpolate redshift to log_tau
 log_tau_func = interp1d(redshift, log_tau);
 

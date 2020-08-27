@@ -1,8 +1,8 @@
 import sys;
 from tabulate import tabulate;
 
-A_s = 2.090524e-09;
-n_s = 0.954;
+A_s = 2.097e-09;
+n_s = 0.9652;
 k_pivot = 0.05;
 
 if (len(sys.argv) < 3):
