@@ -8,6 +8,8 @@ import sys;
 fname = sys.argv[1];
 f = h5py.File(fname, "r");
 
+print("Parsing cosmological data from", fname, "<br/>");
+
 #Unpack the wavenumbers and times
 k = np.array(f["Perturb/Wavenumbers"]);
 redshift = np.array(f["Perturb/Redshifts"]);
@@ -24,7 +26,8 @@ Omegas = np.array(f["Perturb/Omegas"]);
 titles = f["Header"].attrs["FunctionTitles"];
 titlestrings = [];
 for tbytes in titles:
-    titlestrings.append(tbytes.decode("utf-8"));
+#    titlestrings.append(tbytes.decode("utf-8"));
+    titlestrings.append(tbytes);
 
 #Sizes of the perturbation vector
 k_size = len(k);
@@ -149,6 +152,12 @@ def cosmology_background():
     #The column titles
     columns = ["z", "conformal_time", "growth_factor_D", "growth_rate_f", "growth_rate_f_prime", "Hubble_rate", "Hubble_rate_prime", "Omega_m", "Omega_r"];
     col_counter = 9;
+
+    #Also compute the physical density at z=0
+    H = ptarr[5][-1]
+    G_newt = 4.492389e-05 #Mpc^3/(1e10 M_sol)/Gyr^2
+    rho_crit = 3*H*H/(8*np.pi*G_newt)
+    print("The critical density is ", rho_crit, " (10^10 M_sol / Mpc^3)<br/>")
 
     #The other columns should be filled with background densities to this wavenumber
     for i in np.arange(nr_titles):
