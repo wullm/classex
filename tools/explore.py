@@ -155,9 +155,10 @@ def cosmology_background():
 
     #Also compute the physical density at z=0
     H = ptarr[5][-1]
-    G_newt = 4.492389e-05 #Mpc^3/(1e10 M_sol)/Gyr^2
+    #G_newt = 4.492389e-05 #Mpc^3/(1e10 M_sol)/Gyr^2
+    G_newt = 4.49233855e-05 #Mpc^3/(1e10 M_sol)/Gyr^2 (my Mpc,Gyr,M_sol no leap year correction)
     rho_crit = 3*H*H/(8*np.pi*G_newt)
-    print("The critical density is ", rho_crit, " (10^10 M_sol / Mpc^3)<br/>")
+    print("The critical density is ", rho_crit, " (10^10 M_sol / Mpc^3) for H = ", H ,"<br/>")
 
     #The other columns should be filled with background densities to this wavenumber
     for i in np.arange(nr_titles):
