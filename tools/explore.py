@@ -153,16 +153,12 @@ def cosmology_background():
     columns = ["z", "conformal_time", "growth_factor_D", "growth_rate_f", "growth_rate_f_prime", "Hubble_rate", "Hubble_rate_prime", "Omega_m", "Omega_r"];
     col_counter = 9;
 
-    Mpc = f["Header"].attrs["Unit length in cgs (U_L)"][0] / 3.085677581491e+024
-    Gyr = f["Header"].attrs["Unit time in cgs (U_t)"][0] / 3.153600000000e+016
-    MsolExp10 = f["Header"].attrs["Unit mass in cgs (U_M)"][0] / 1.988435e43
-
     #Also compute the physical density at z=0
     H = ptarr[5][-1]
-    #G_newt = 4.492389e-05 #Mpc^3/(1e10 M_sol)/Gyr^2
+    #G_newt = 4.492389e-05 #Mpc^3/(1e10 M_sol)/Gyr^2 (what I used before)
     G_newt = 4.49233855e-05 #Mpc^3/(1e10 M_sol)/Gyr^2 (my Mpc,Gyr,M_sol no leap year correction)
-    rho_crit = 3*H*H/(8*np.pi*G_newt) * (Mpc**3 / MsolExp10)
-    print("The critical density is ", rho_crit, " (10^10 M_sol / Mpc^3) for H = ", (H * Gyr) ,"<br/>")
+    rho_crit = 3*H*H/(8*np.pi*G_newt)
+    print("The critical density is ", rho_crit, " (10^10 M_sol / Mpc^3) for H = ", H ,"<br/>")
 
     #The other columns should be filled with background densities to this wavenumber
     for i in np.arange(nr_titles):
