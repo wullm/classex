@@ -197,7 +197,8 @@ def power_at_redshift(z,A_s,n_s,k_pivot):
             delta_func = interp2d(log_tau, k, delta[i].T);
             pt = delta_func(lt, k).reshape(k_size);
             if (titlestrings[i][0:2] == "d_"):
-                P = A_s * (pt*pt) * (k / k_pivot) ** n_s;
+                twoPP = 2 * np.pi**2
+                P = A_s * (pt*pt) * (k / k_pivot) ** (n_s - 1) * k * twoPP;
                 Parr[col_counter] = P;
                 columns.append(titlestrings[i]);
                 col_counter = col_counter + 1;
