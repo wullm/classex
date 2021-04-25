@@ -46,13 +46,14 @@ int main(int argc, char *argv[]) {
     /* Define the CLASS structures */
     struct precision pr;  /* for precision parameters */
     struct background ba; /* for cosmological background */
-    struct thermo th;     /* for thermodynamics */
-    struct perturbs pt;   /* for source functions */
-    struct transfers tr;  /* for transfer functions */
-    struct primordial pm; /* for primordial spectra */
-    struct spectra sp;    /* for output spectra */
-    struct nonlinear nl;  /* for non-linear spectra */
-    struct lensing le;    /* for lensed spectra */
+    struct thermodynamics th;     /* for thermodynamics */
+    struct perturbations pt;   /* for source functions */
+    struct transfer ptr;   /* for transfer functions */
+    struct primordial ppr;  /* for primordial functions */
+    struct harmonic phr;  /* for harmonic functions */
+    struct fourier pfo;   /* for fourier */
+    struct lensing ple;   /* for lensing */
+    struct distortions psd;    /* for distortions */
     struct output op;     /* for output files */
     ErrorMsg errmsg;      /* for CLASS-specific error messages */
 
@@ -65,8 +66,8 @@ int main(int argc, char *argv[]) {
     int class_argc = 2;
     char *class_argv[] = {"", pars.ClassIniFile, pars.ClassPreFile};
 
-    if (input_init_from_arguments(class_argc, class_argv, &pr, &ba, &th, &pt, &tr,
-                                  &pm, &sp, &nl, &le, &op, errmsg) == _FAILURE_) {
+    if (input_init(class_argc, class_argv, &pr, &ba, &th, &pt,
+                   &ptr, &ppr, &phr, &pfo, &ple, &psd, &op, errmsg) == _FAILURE_) {
         printf("Error running input_init_from_arguments \n=>%s\n", errmsg);
     }
 
@@ -80,8 +81,8 @@ int main(int argc, char *argv[]) {
         printf("Error in thermodynamics_init \n%s\n", th.error_message);
     }
 
-    if (perturb_init(&pr, &ba, &th, &pt) == _FAILURE_) {
-        printf("Error in perturb_init \n%s\n", pt.error_message);
+    if (perturbations_init(&pr, &ba, &th, &pt) == _FAILURE_) {
+        printf("Error in perturbations_init \n%s\n", pt.error_message);
     }
 
     printf("\n");
@@ -131,7 +132,7 @@ int main(int argc, char *argv[]) {
     }
 
     /* Close CLASS again */
-    if (perturb_free(&pt) == _FAILURE_) {
+    if (perturbations_free(&pt) == _FAILURE_) {
         printf("Error in freeing class memory \n%s\n", pt.error_message);
         return 1;
     }

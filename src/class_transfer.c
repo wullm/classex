@@ -20,7 +20,7 @@
 #include "../include/class_transfer.h"
 
 int readPerturbData(struct perturb_data *data, struct params *pars,
-                    struct units *us, struct perturbs *pt, struct background *ba) {
+                    struct units *us, struct perturbations *pt, struct background *ba) {
     /* Try getting a source */
     int index_md = pt->index_md_scalars;  // scalar mode
     int index_ic = 0;                     // index of the initial condition
@@ -135,7 +135,7 @@ int readPerturbData(struct perturb_data *data, struct params *pars,
         double tau = pt->tau_sampling[index_tau];
 
         /* Make CLASS evaluate background quantities at this time*/
-        background_at_tau(ba, tau, ba->bg_size, ba->inter_normal,
+        background_at_tau(ba, tau, ba->bg_size, 0,
                           &last_index, pvecback);
 
         /* The scale-factor and redshift */

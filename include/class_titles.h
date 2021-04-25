@@ -45,7 +45,7 @@ static inline void store_title(struct index_title **pairs, int pt_index, int ba_
     *i  = *i + 1;
 }
 
-int initClassTitles(struct class_titles *cat, struct perturbs *pt, struct background *ba);
+int initClassTitles(struct class_titles *cat, struct perturbations *pt, struct background *ba);
 int cleanClassTitles(struct class_titles *cat);
 int matchClassTitles(struct class_titles *cat, struct params *pars);
 

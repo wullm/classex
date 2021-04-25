@@ -7,11 +7,11 @@ STD_LIBRARIES = -lm
 HDF5_LIBRARIES = -lhdf5
 CLASS_LIBRARIES = -lclass
 
-CLASS_PATH = /home/qvgd89/class_m/class_public
+CLASS_PATH = /home/qvgd89/class_n/class_public
 
 HDF5_INCLUDES += -I/usr/lib/x86_64-linux-gnu/hdf5/serial/include
 HDF5_LIBRARIES += -L/usr/lib/x86_64-linux-gnu/hdf5/serial -I/usr/include/hdf5/serial
-CLASS_INCLUDES += -I$(CLASS_PATH)/include
+CLASS_INCLUDES += -I$(CLASS_PATH)/include -I$(CLASS_PATH)/external/HyRec2020 -I$(CLASS_PATH)/external/RecfastCLASS -I$(CLASS_PATH)/external/heating
 CLASS_LIBRARIES += -L$(PWD)/class -Wl,-rpath=$(PWD)/class
 
 #Putting it together
