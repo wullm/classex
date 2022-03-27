@@ -176,7 +176,7 @@ def cosmology_background():
 
     return(ptarr, columns);
 
-def power_at_redshift(z,A_s,n_s,k_pivot):
+def power_at_redshift(z,A_s,n_s,k_pivot,alpha_s,beta_s):
     if (z < redshift.min() or z > redshift.max()):
         print("z is out of bounds");
         return("", []);
@@ -199,6 +199,9 @@ def power_at_redshift(z,A_s,n_s,k_pivot):
             if (titlestrings[i][0:2] == "d_"):
                 twoPP = 2 * np.pi**2
                 P = A_s * (pt*pt) * (k / k_pivot) ** (n_s - 1) * k * twoPP;
+                if not (alpha_s == 0 and beta_s == 0):
+                    lnk = np.log(k / k_pivot)
+                    P *= (k / k_pivot) ** (0.5 * (alpha_s * lnk + beta_s * lnk * lnk / 3.0))
                 Parr[col_counter] = P;
                 columns.append(titlestrings[i]);
                 col_counter = col_counter + 1;
